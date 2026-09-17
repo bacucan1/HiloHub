@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=Sora:wght@600;700&display=swap');
+
 /*
  * App Global CSS
  * ----------------------------------------------------------------------------
@@ -35,3 +37,146 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+body,
+ion-content {
+	font-family: var(--app-font-body);
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+ion-content {
+	--padding-bottom: env(safe-area-inset-bottom);
+}
+
+ion-input,
+ion-textarea,
+ion-label,
+ion-item,
+ion-button {
+	--min-height: 44px;
+}
+
+.home-header ion-toolbar {
+	--background: linear-gradient(120deg, #154734 0%, #22724b 45%, #2f9f63 100%);
+	--color: #f5f7f7;
+	--border-width: 0;
+}
+
+.home-header ion-title {
+	font-family: var(--app-font-heading);
+	letter-spacing: .4px;
+	font-weight: 700;
+}
+
+.home-header ion-buttons[slot='end'] { gap: 2px; }
+.home-header ion-button { --padding-start: 8px; --padding-end: 8px; min-width: 40px; min-height: 44px; }
+.home-header .create-button { --background: #f4e9bd; --color: #194028; --border-radius: 999px; font-weight: 700; text-transform: none; }
+
+@media (max-width: 420px) {
+	.home-header ion-title { padding-inline: 8px; font-size: 1rem; }
+	.home-header ion-button { --padding-start: 5px; --padding-end: 5px; }
+	.home-header .create-label { display: none; }
+	.home-content .hero { margin-top: 0; padding: 18px; border-radius: 18px; }
+	.home-content .hero-topline { gap: 8px; }
+	.home-content .role-badge { padding-inline: 7px; font-size: .64rem; }
+	.home-content .feed-tools { padding-inline: 6px; }
+	.home-content .feed-tools ion-segment-button { font-size: .68rem; }
+	.home-content .feed-heading > span { white-space: nowrap; }
+	.home-content .info-item { --padding-start: 9px; --inner-padding-end: 7px; }
+	.home-content .post-vote { margin-right: 8px; }
+	.home-content .read-label { display: none; }
+}
+
+h1,
+h2,
+h3,
+ion-title {
+	font-family: var(--app-font-heading);
+}
+
+.app-page-header ion-toolbar {
+	--background: rgba(246, 250, 247, 0.94);
+	--color: #173b29;
+	--border-width: 0;
+	backdrop-filter: blur(8px);
+}
+
+.app-page-header ion-title {
+	font-weight: 700;
+	letter-spacing: 0.2px;
+}
+
+.app-page-header ion-back-button {
+	--color: #235b3d;
+}
+
+.app-delete-alert .alert-wrapper {
+	border-radius: 18px;
+	border: 1px solid #d8e6de;
+	background: linear-gradient(140deg, #f7fcf9 0%, #f0f7f3 100%);
+	box-shadow: 0 18px 35px rgba(23, 59, 41, 0.2);
+	overflow: hidden;
+}
+
+.app-delete-alert .alert-wrapper::before {
+	content: '';
+	display: block;
+	height: 4px;
+	background: linear-gradient(90deg, #b83731 0%, #de5f56 100%);
+}
+
+.app-delete-alert .alert-head {
+	padding-top: 18px;
+	padding-bottom: 10px;
+	background: linear-gradient(120deg, #d8ebdf 0%, #e8f5ed 100%);
+}
+
+.app-delete-alert .alert-title {
+	color: #1e4d35;
+	font-family: var(--app-font-heading);
+	font-size: 1.1rem;
+	font-weight: 700;
+}
+
+.app-delete-alert .alert-sub-title {
+	color: #2f6d4b;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	font-size: 0.7rem;
+}
+
+.app-delete-alert .alert-message {
+	color: #345744;
+	line-height: 1.4;
+	padding-top: 12px;
+	padding-bottom: 8px;
+}
+
+.app-delete-alert .alert-button-group {
+	padding: 10px 12px 14px;
+	gap: 10px;
+}
+
+.app-delete-alert .alert-button {
+	border-radius: 12px;
+	font-weight: 700;
+	min-height: 40px;
+	border: 0;
+}
+
+.app-delete-alert .alert-button.app-alert-cancel-btn {
+	background: #dcece3;
+	color: #2d6246;
+}
+
+.app-delete-alert .alert-button.app-alert-delete-btn {
+	background: linear-gradient(120deg, #a2362f 0%, #ca4e45 100%);
+	color: #fff7f7;
+	box-shadow: 0 10px 16px rgba(162, 54, 47, 0.25);
+}

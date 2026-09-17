@@ -1,2 +1,28 @@
 // For information on how to create your own theme, please refer to:
 // https://ionicframework.com/docs/theming/
+
+:root {
+	--app-font-body: 'Outfit', 'Segoe UI', sans-serif;
+	--app-font-heading: 'Sora', 'Segoe UI', sans-serif;
+
+	--ion-color-primary: #246748;
+	--ion-color-primary-rgb: 36, 103, 72;
+	--ion-color-primary-contrast: #f7fbf8;
+	--ion-color-primary-contrast-rgb: 247, 251, 248;
+	--ion-color-primary-shade: #205b3f;
+	--ion-color-primary-tint: #3a755a;
+
+	--ion-color-warning: #e0ad3f;
+	--ion-color-warning-rgb: 224, 173, 63;
+	--ion-color-warning-contrast: #1e1a10;
+	--ion-color-warning-contrast-rgb: 30, 26, 16;
+	--ion-color-warning-shade: #c59737;
+	--ion-color-warning-tint: #e3b555;
+
+	--ion-color-danger: #bb3e35;
+	--ion-color-danger-rgb: 187, 62, 53;
+	--ion-color-danger-contrast: #fff7f7;
+	--ion-color-danger-contrast-rgb: 255, 247, 247;
+	--ion-color-danger-shade: #a5372f;
+	--ion-color-danger-tint: #c25149;
+}

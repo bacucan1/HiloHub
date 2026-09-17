@@ -1,0 +1,48 @@
+<ion-header [translucent]="true" class="app-page-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Nueva publicación</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="form-content">
+  <div class="form-shell ion-padding">
+    <section class="form-hero">
+      <p class="eyebrow">Nueva publicación</p>
+      <h1>Comparte con tu comunidad</h1>
+      <p>Formula una idea clara y elige la comunidad donde puede crecer.</p>
+    </section>
+
+    <form [formGroup]="infoForm" (ngSubmit)="saveInfo()" class="info-form">
+      <ion-list lines="none" class="form-list">
+        <ion-item class="form-item">
+          <ion-input type="text" label="Título de la publicación" labelPlacement="stacked" placeholder="Ej. ¿Cómo resolvemos este problema?" maxlength="140" formControlName="title"></ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="infoForm.controls['title'].invalid && infoForm.controls['title'].touched">
+          El título es obligatorio y no puede superar 140 caracteres.
+        </ion-text>
+
+        <ion-item class="form-item">
+          <ion-input type="text" label="Comunidad" labelPlacement="stacked" placeholder="Ej. programación" formControlName="community"></ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="infoForm.controls['community'].invalid && infoForm.controls['community'].touched">
+          Usa minúsculas, números y guiones. Ejemplo: tecnología.
+        </ion-text>
+
+        <ion-item class="form-item">
+          <ion-textarea label="Contenido" labelPlacement="stacked" placeholder="Explica tu pregunta, idea o recurso con contexto." maxlength="10000" formControlName="body" rows="7"></ion-textarea>
+        </ion-item>
+        <ion-text color="danger" *ngIf="infoForm.controls['body'].invalid && infoForm.controls['body'].touched">
+          El contenido es obligatorio y no puede superar 10.000 caracteres.
+        </ion-text>
+      </ion-list>
+
+      <ion-button type="submit" shape="round" expand="block" [disabled]="!infoForm.valid">
+        <ion-icon slot="start" name="save"></ion-icon>
+        Publicar aporte
+      </ion-button>
+    </form>
+  </div>
+</ion-content>

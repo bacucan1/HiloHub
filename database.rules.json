@@ -1,0 +1,43 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": false,
+    "users": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid == $uid || auth.token.role == 'moderator' || auth.token.role == 'admin')",
+        ".write": "auth != null && (auth.uid == $uid || auth.token.role == 'admin') && (auth.token.role == 'admin' || !data.exists() || newData.child('role').val() == data.child('role').val())",
+        ".validate": "newData.hasChildren(['displayName', 'email']) && (!newData.child('role').exists() || newData.child('role').val() in ['user', 'moderator', 'admin'])"
+      }
+    },
+    "posts": {
+      ".indexOn": ["createdAt", "community"],
+      "$postId": {
+        ".read": "auth != null",
+        ".write": "auth != null && ((!data.exists() && newData.child('authorId').val() == auth.uid) || (data.exists() && (data.child('authorId').val() == auth.uid || auth.token.role == 'moderator' || auth.token.role == 'admin')))",
+        ".validate": "newData.hasChildren(['title', 'body', 'community', 'authorId', 'authorName', 'score', 'commentCount', 'createdAt']) && newData.child('title').isString() && newData.child('title').val().length <= 140 && newData.child('body').isString() && newData.child('body').val().length <= 10000 && newData.child('authorId').isString() && newData.child('score').isNumber() && newData.child('commentCount').isNumber()"
+      }
+    },
+    "comments": {
+      "$postId": {
+        ".read": "auth != null",
+        "$commentId": {
+          ".write": "auth != null && ((!data.exists() && newData.child('authorId').val() == auth.uid) || (data.exists() && (data.child('authorId').val() == auth.uid || auth.token.role == 'moderator' || auth.token.role == 'admin')))",
+          ".validate": "newData.hasChildren(['body', 'authorId', 'authorName', 'createdAt']) && newData.child('body').isString() && newData.child('body').val().length <= 10000"
+        }
+      }
+    },
+    "votes": {
+      "$postId": {
+        "$uid": {
+          ".read": "auth != null",
+          ".write": "auth != null && auth.uid == $uid",
+          ".validate": "newData.isNumber() && (newData.val() == 1 || newData.val() == -1)"
+        }
+      }
+    },
+    "communities": {
+      ".read": "auth != null",
+      ".write": "auth != null && (auth.token.role == 'moderator' || auth.token.role == 'admin')"
+    }
+  }
+}

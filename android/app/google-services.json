@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "902020735158",
+    "firebase_url": "https://crudpmovil-default-rtdb.firebaseio.com",
+    "project_id": "crudpmovil",
+    "storage_bucket": "crudpmovil.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902020735158:android:1345c0f9827a983dc58617",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "902020735158-h3mt0vcsoojk8cfc0hpmt94652ud0llo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9Tf-VrbpJUCFmQnwteZ1EaZxoDEIV_qg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "902020735158-h3mt0vcsoojk8cfc0hpmt94652ud0llo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

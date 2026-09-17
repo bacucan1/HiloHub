@@ -1,20 +1,89 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="home-header">
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>InfoHub</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="light" aria-label="Ver comunidades" routerLink="/team">
+        <ion-icon slot="icon-only" name="people-outline"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="role === 'admin'" fill="clear" color="light" aria-label="Abrir administración" routerLink="/admin">
+        <ion-icon slot="icon-only" name="shield-checkmark-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" color="light" aria-label="Cerrar sesión" (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="solid" color="light" class="create-button" (click)="addPost()">
+        <ion-icon slot="start" name="add-circle"></ion-icon>
+        <span class="create-label">Publicar</span>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="home-content">
+  <div class="home-shell ion-padding">
+    <section class="hero">
+      <div class="hero-topline">
+        <div>
+          <p class="eyebrow">InfoHub · espacio educativo</p>
+          <h1>Aprende en comunidad</h1>
+        </div>
+        <span class="role-badge"><ion-icon name="ribbon-outline"></ion-icon>{{ role }}</span>
+      </div>
+      <p class="subtitle">Comparte preguntas, ideas y recursos con una comunidad que aprende contigo.</p>
+      <div class="hero-metrics" aria-label="Resumen de la comunidad">
+        <span><strong>{{ posts.length }}</strong> publicaciones</span>
+        <span><strong>{{ communityCount }}</strong> comunidades</span>
+      </div>
+    </section>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    <section class="feed-tools" aria-label="Buscar y filtrar publicaciones">
+      <ion-searchbar [(ngModel)]="searchTerm" placeholder="Buscar temas, autores o comunidades" inputmode="search" show-clear-button="focus"></ion-searchbar>
+      <ion-segment [(ngModel)]="selectedFeed" mode="md" aria-label="Orden del feed">
+        <ion-segment-button value="recent"><ion-label>Recientes</ion-label></ion-segment-button>
+        <ion-segment-button value="popular"><ion-label>Más útiles</ion-label></ion-segment-button>
+        <ion-segment-button value="mine"><ion-label>Mis aportes</ion-label></ion-segment-button>
+      </ion-segment>
+    </section>
+
+    <div class="feed-heading">
+      <div><p class="eyebrow">Conversaciones activas</p><h2>{{ selectedFeed === 'mine' ? 'Mis aportes' : selectedFeed === 'popular' ? 'Lo más útil' : 'Últimas publicaciones' }}</h2></div>
+      <span>{{ filteredPosts.length }} resultados</span>
+    </div>
+
+    <ion-list class="info-list" *ngIf="filteredPosts.length > 0; else emptyState">
+      <ion-item-sliding *ngFor="let post of filteredPosts; trackBy: trackByPost">
+        <ion-item button detail="false" [routerLink]="['/detail', post.id]" class="info-item" lines="none">
+          <div class="post-vote" slot="start">
+            <ion-icon name="trending-up-outline"></ion-icon>
+            <strong>{{ post.score }}</strong>
+          </div>
+          <ion-label>
+            <p class="post-meta"><span>r/{{ post.community }}</span> · {{ post.authorName }} · {{ post.createdAt | date:'d MMM, HH:mm' }}</p>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.body }}</p>
+            <small><ion-icon name="chatbubble-outline"></ion-icon> {{ post.commentCount }} respuestas <span class="read-label">Abrir conversación <ion-icon name="arrow-forward-outline"></ion-icon></span></small>
+          </ion-label>
+        </ion-item>
+
+        <ion-item-options side="end" *ngIf="post.authorId === authService.currentUser?.uid || role !== 'user'">
+          <ion-item-option class="delete-swipe-option" (click)="delete(post)">
+            <ion-icon name="trash"></ion-icon>
+            Eliminar
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+    <ng-template #emptyState>
+      <section class="empty-state">
+        <ion-icon name="sparkles-outline"></ion-icon>
+        <h2>Aún no hay publicaciones</h2>
+        <p>Abre la conversación publicando algo para tu comunidad.</p>
+        <ion-button shape="round" (click)="addPost()">
+          <ion-icon slot="start" name="add"></ion-icon>
+          Crear publicación
+        </ion-button>
+      </section>
+    </ng-template>
   </div>
 </ion-content>

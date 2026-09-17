@@ -1,0 +1,182 @@
+.detail-content {
+	--background: linear-gradient(170deg, #f7faf8 0%, #ebf2ed 58%, #dfe9e3 100%);
+}
+
+ion-toolbar {
+	--background: transparent;
+	--border-width: 0;
+}
+
+.detail-shell {
+	max-width: 760px;
+	margin: 0 auto;
+}
+
+.detail-card {
+	margin-top: 8px;
+	padding: 24px;
+	border-radius: 22px;
+	background: linear-gradient(140deg, #ffffff 0%, #f2f8f4 100%);
+	box-shadow: 0 16px 30px rgba(23, 59, 41, 0.16);
+	animation: fade-up 280ms ease-out;
+}
+
+.detail-card > * {
+	max-width: 100%;
+}
+
+.tag {
+	display: inline-flex;
+	gap: 6px;
+	align-items: center;
+	padding: 6px 10px;
+	border-radius: 999px;
+	background: #dcece4;
+	color: #25543c;
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+.post-context,
+.discussion-heading,
+.comment-author {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.post-date,
+.discussion-heading > span,
+.comment-author span {
+	color: #718579;
+	font-size: .74rem;
+}
+
+.detail-card h1 {
+	margin: 14px 0 10px;
+	color: #1f4a33;
+	font-family: var(--app-font-heading);
+	font-size: clamp(1.35rem, 4vw, 2rem);
+}
+
+.author-line {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	margin-bottom: 18px !important;
+	color: #6b806f !important;
+	font-size: .8rem;
+}
+
+.author-line ion-icon { color: #2c7954; font-size: 1.1rem; }
+.author-line strong { color: #27583e; }
+
+.detail-card p {
+	margin: 0;
+	color: #3b5f4a;
+	line-height: 1.55;
+	white-space: pre-line;
+}
+
+.post-actions {
+	margin-top: 20px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.post-actions ion-button {
+	--border-color: #8bb49b;
+	--color: #245d3f;
+	font-weight: 700;
+}
+
+.post-actions ion-button:first-child { --background: #e8f3eb; }
+
+.discussion-heading {
+	margin-top: 30px;
+	align-items: end;
+}
+
+.discussion-heading h2 { margin: 0; color: #204a34; font-family: var(--app-font-heading); font-size: 1.25rem; }
+.discussion-heading .eyebrow { margin: 0 0 3px; }
+
+.comments-list { margin-top: 8px; padding: 0; background: transparent; }
+.comments-list ion-item { --background: #f5f9f6; --padding-start: 13px; --inner-padding-end: 13px; margin-bottom: 8px; border: 1px solid #e1ebe3; border-radius: 12px; }
+.comments-list ion-label { min-width: 0; }
+.comment-author { margin: 0 0 5px !important; color: #285a40 !important; font-size: .8rem !important; }
+.comment-body { font-size: .88rem; }
+.comment-box { margin-top: 14px; --background: #f3f8f4; --border-radius: 12px; border: 1px solid #dce8df; }
+.comment-box ion-textarea { --color: #204a34; --label-color: #2c6647; --highlight-color-focused: #2d7a53; }
+.comment-button { margin-top: 10px; --background: linear-gradient(115deg, #21563a 0%, #2b8a58 100%); font-weight: 700; }
+
+.delete-action-btn {
+	--background: linear-gradient(120deg, #972f2b 0%, #cf4f48 100%);
+	--color: #fff8f8;
+	--box-shadow: 0 12px 22px rgba(149, 47, 43, 0.28);
+}
+
+.missing-state {
+	margin-top: 10px;
+	padding: 26px;
+	border-radius: 20px;
+	text-align: center;
+	background: #ffffffea;
+	box-shadow: 0 10px 22px rgba(20, 51, 35, 0.1);
+}
+
+.missing-state ion-icon {
+	font-size: 2.2rem;
+	color: #2f8057;
+}
+
+.missing-state h2 {
+	margin: 10px 0 4px;
+	color: #1f4a33;
+	font-family: var(--app-font-heading);
+}
+
+.missing-state p {
+	margin: 0 0 14px;
+	color: #466652;
+}
+
+@keyframes fade-up {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (max-width: 480px) {
+	.detail-card {
+		margin-top: 0;
+		padding: 16px;
+		border-radius: 16px;
+	}
+
+	.post-context {
+		align-items: flex-start;
+		flex-wrap: wrap;
+	}
+
+	.detail-card h1 {
+		font-size: 1.45rem;
+		overflow-wrap: anywhere;
+	}
+
+	.post-actions ion-button {
+		flex: 1 1 auto;
+		margin: 0;
+	}
+
+	.discussion-heading > span {
+		white-space: nowrap;
+	}
+}

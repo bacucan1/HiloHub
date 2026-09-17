@@ -34,6 +34,9 @@ log.txt
 npm-debug.log
 yarn-error.log
 
+# Firebase Admin SDK credentials
+/firebase-admin-tools/service-account.json
+
 # IDEs and editors
 .idea/
 .project
