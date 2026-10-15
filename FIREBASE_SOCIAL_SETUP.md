@@ -60,10 +60,34 @@ Roles disponibles:
 
 Después de cambiar un rol, el usuario debe cerrar sesión y volver a entrar, o forzar la renovación del token. Las reglas consultan `auth.token.role`.
 
-## 4. Datos iniciales
+Los cambios desde el panel de administración usan Cloud Functions y actualizan el custom claim y el perfil. Despliega las funciones antes de usar el selector de roles. Para bootstrap, el script administrativo también sincroniza el perfil; si tu Realtime Database no usa la URL predeterminada, configura `FIREBASE_DATABASE_URL`.
+
+## 4. Moderación local de publicaciones
+
+La app usa Ollama con `llama-guard3:1b` en el computador local o en otro equipo de la misma red. No se necesita clave ni se envía el contenido a una API externa.
+
+Instala Ollama y descarga el modelo:
+
+```powershell
+ollama pull llama-guard3:1b
+```
+
+Para usarlo desde Android, inicia Ollama escuchando en la red y habilita los orígenes de la app. En Windows, configura estas variables y reinicia Ollama:
+
+```powershell
+setx OLLAMA_HOST "0.0.0.0:11434"
+setx OLLAMA_ORIGINS "http://localhost:4200,http://127.0.0.1:4200,http://localhost:8100,http://127.0.0.1:8100,http://localhost,https://localhost"
+setx OLLAMA_NO_CLOUD "true"
+```
+
+En el formulario de publicación, configura la IP privada del computador y pulsa **Probar conexión**. En Windows, cambia la red de confianza a perfil **Privado** y permite TCP 11434 solo en ese perfil y en la subred local; no publiques este puerto en Internet.
+
+La revisión se aplica en el cliente antes de enviar a Firebase y no puede impedir que alguien escriba directamente en la base de datos. Las reglas de Firebase siguen siendo la autoridad para autenticación, roles y validación de datos.
+
+## 5. Datos iniciales
 
 No uses `infos/` para las publicaciones nuevas. El feed lee `posts/`. Los registros antiguos no se muestran hasta migrarlos a la estructura `posts/{postId}`.
 
-## 5. Producción
+## 6. Producción
 
 El cliente mantiene `score` y `commentCount` como datos desnormalizados para que el feed sea rápido. Para una versión pública, mueve esos agregados a Cloud Functions y valida límites, reportes, bloqueo de usuarios y moderación desde backend.

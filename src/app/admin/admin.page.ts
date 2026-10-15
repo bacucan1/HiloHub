@@ -20,7 +20,7 @@ export class AdminPage {
   constructor(
     private adminService: AdminService,
     private socialService: SocialService,
-    private authService: AuthService,
+    public authService: AuthService,
     private alertController: AlertController,
     private toastController: ToastController
   ) {

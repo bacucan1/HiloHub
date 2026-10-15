@@ -10,38 +10,93 @@
 <ion-content [fullscreen]="true" class="form-content">
   <div class="form-shell ion-padding">
     <section class="form-hero">
-      <p class="eyebrow">Nueva publicación</p>
-      <h1>Comparte con tu comunidad</h1>
-      <p>Formula una idea clara y elige la comunidad donde puede crecer.</p>
+      <p class="eyebrow">NUEVA CONVERSACIÓN</p>
+      <h1>¿Qué te gustaría compartir?</h1>
+      <p>Escribe con claridad y elige la comunidad adecuada. Antes de publicar, el contenido se revisa localmente.</p>
     </section>
 
     <form [formGroup]="infoForm" (ngSubmit)="saveInfo()" class="info-form">
+      <section class="moderation-panel" aria-labelledby="moderation-title">
+        <div class="moderation-heading">
+          <span class="moderation-icon"><ion-icon name="shield-checkmark-outline"></ion-icon></span>
+          <div>
+            <h2 id="moderation-title">Privacidad de revisión</h2>
+            <p>El texto se procesa en Ollama dentro de tu red local.</p>
+          </div>
+          <span class="connection-status" [class.connected]="ollamaStatus === 'connected'" [class.failed]="ollamaStatus === 'error'">
+            <ion-icon [name]="ollamaStatus === 'connected' ? 'checkmark-circle' : ollamaStatus === 'error' ? 'alert-circle' : 'ellipse'"></ion-icon>
+            {{ ollamaStatus === 'connected' ? 'Listo' : ollamaStatus === 'error' ? 'Sin conexión' : 'Local' }}
+          </span>
+        </div>
+        <details class="model-connection" *ngIf="canManageModeration">
+          <summary>Configurar conexión local</summary>
+          <ion-item class="form-item endpoint-item" lines="none">
+            <ion-input
+              type="url"
+              label="Dirección de Ollama"
+              labelPlacement="stacked"
+              placeholder="http://192.168.1.20:11434"
+              [(ngModel)]="ollamaEndpoint"
+              [ngModelOptions]="{ standalone: true }"
+              (ionInput)="ollamaStatus = 'idle'; ollamaMessage = ''">
+            </ion-input>
+          </ion-item>
+          <ion-button class="connection-button" fill="outline" [disabled]="isCheckingOllama || isSubmitting" (click)="checkOllama()">
+            <ion-spinner *ngIf="isCheckingOllama" slot="start" name="crescent"></ion-spinner>
+            <ion-icon *ngIf="!isCheckingOllama" slot="start" name="wifi-outline"></ion-icon>
+            {{ isCheckingOllama ? 'Conectando' : 'Probar conexión' }}
+          </ion-button>
+        </details>
+        <p class="connection-message" [class.connected-text]="ollamaStatus === 'connected'" [class.error-text]="ollamaStatus === 'error'" aria-live="polite" *ngIf="ollamaMessage">
+          {{ ollamaMessage }}
+        </p>
+        <p class="connection-help" *ngIf="canManageModeration">En Android, usa la IP local del computador donde se ejecuta Ollama. Modelo: llama-guard3:1b.</p>
+        <p class="connection-help" *ngIf="!canManageModeration">La revisión automática está configurada por el equipo de moderación.</p>
+      </section>
+
       <ion-list lines="none" class="form-list">
+        <div class="field-heading field-hint">
+          <span>Hasta 140 caracteres</span>
+        </div>
         <ion-item class="form-item">
-          <ion-input type="text" label="Título de la publicación" labelPlacement="stacked" placeholder="Ej. ¿Cómo resolvemos este problema?" maxlength="140" formControlName="title"></ion-input>
+          <ion-input id="post-title" type="text" label="Título de la publicación" labelPlacement="stacked" placeholder="Resume tu pregunta o idea" maxlength="140" formControlName="title" autocomplete="off"></ion-input>
         </ion-item>
         <ion-text color="danger" *ngIf="infoForm.controls['title'].invalid && infoForm.controls['title'].touched">
           El título es obligatorio y no puede superar 140 caracteres.
         </ion-text>
 
+        <div class="field-heading field-hint">
+          <span>Elige dónde iniciar la conversación</span>
+        </div>
         <ion-item class="form-item">
-          <ion-input type="text" label="Comunidad" labelPlacement="stacked" placeholder="Ej. programación" formControlName="community"></ion-input>
+          <ion-select id="post-community" label="Comunidad" labelPlacement="stacked" placeholder="Selecciona una comunidad" formControlName="community" interface="popover">
+            <ion-select-option *ngFor="let community of communities" [value]="community.id">r/{{ community.name }}</ion-select-option>
+          </ion-select>
         </ion-item>
         <ion-text color="danger" *ngIf="infoForm.controls['community'].invalid && infoForm.controls['community'].touched">
-          Usa minúsculas, números y guiones. Ejemplo: tecnología.
+          Selecciona una comunidad válida antes de publicar.
         </ion-text>
+        <ion-text color="danger" *ngIf="communitiesError">{{ communitiesError }}</ion-text>
+        <p class="community-help" *ngIf="!communities.length && !communitiesError">Todavía no hay comunidades disponibles. <a routerLink="/communities">Explóralas aquí</a>.</p>
 
+        <div class="field-heading field-hint">
+          <span>Hasta 10.000 caracteres</span>
+        </div>
         <ion-item class="form-item">
-          <ion-textarea label="Contenido" labelPlacement="stacked" placeholder="Explica tu pregunta, idea o recurso con contexto." maxlength="10000" formControlName="body" rows="7"></ion-textarea>
+          <ion-textarea id="post-body" label="Contenido" labelPlacement="stacked" placeholder="Añade el contexto necesario para que la comunidad pueda ayudarte." maxlength="10000" formControlName="body" rows="7" autoGrow="true"></ion-textarea>
         </ion-item>
+        <small class="character-count">{{ infoForm.controls['body'].value.length }} / 10.000</small>
         <ion-text color="danger" *ngIf="infoForm.controls['body'].invalid && infoForm.controls['body'].touched">
           El contenido es obligatorio y no puede superar 10.000 caracteres.
         </ion-text>
       </ion-list>
 
-      <ion-button type="submit" shape="round" expand="block" [disabled]="!infoForm.valid">
-        <ion-icon slot="start" name="save"></ion-icon>
-        Publicar aporte
+      <ion-text color="danger" class="submit-error" role="alert" *ngIf="errorMessage">{{ errorMessage }}</ion-text>
+
+      <ion-button type="submit" expand="block" [disabled]="!infoForm.valid || isSubmitting || isCheckingOllama || !endpointReady">
+        <ion-spinner *ngIf="isSubmitting" slot="start" name="crescent"></ion-spinner>
+        <ion-icon *ngIf="!isSubmitting" slot="start" name="send-outline"></ion-icon>
+        {{ isSubmitting ? 'Revisando y publicando…' : 'Revisar y publicar' }}
       </ion-button>
     </form>
   </div>

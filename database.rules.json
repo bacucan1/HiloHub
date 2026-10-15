@@ -1,23 +1,39 @@
 {
   "rules": {
-    ".read": "auth != null",
+    ".read": false,
     ".write": false,
     "users": {
+      ".read": "auth != null && (auth.token.role == 'moderator' || auth.token.role == 'admin')",
       "$uid": {
         ".read": "auth != null && (auth.uid == $uid || auth.token.role == 'moderator' || auth.token.role == 'admin')",
-        ".write": "auth != null && (auth.uid == $uid || auth.token.role == 'admin') && (auth.token.role == 'admin' || !data.exists() || newData.child('role').val() == data.child('role').val())",
+        ".write": "auth != null && ((auth.uid == $uid && newData.child('role').val() == data.child('role').val()) || (auth.token.role == 'admin' && !newData.exists()))",
         ".validate": "newData.hasChildren(['displayName', 'email']) && (!newData.child('role').exists() || newData.child('role').val() in ['user', 'moderator', 'admin'])"
       }
     },
+    "subscriptions": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": false
+      }
+    },
+    "moderation": {
+      ".read": "auth != null",
+      "ollamaEndpoint": {
+        ".write": "auth != null && (auth.token.role == 'moderator' || auth.token.role == 'admin')",
+        ".validate": "newData.isString() && newData.val().length <= 200"
+      }
+    },
     "posts": {
+      ".read": "auth != null",
       ".indexOn": ["createdAt", "community"],
       "$postId": {
         ".read": "auth != null",
-        ".write": "auth != null && ((!data.exists() && newData.child('authorId').val() == auth.uid) || (data.exists() && (data.child('authorId').val() == auth.uid || auth.token.role == 'moderator' || auth.token.role == 'admin')))",
+        ".write": "auth != null && ((!data.exists() && newData.exists() && auth.token.email_verified == true && newData.child('authorId').val() == auth.uid && root.child('communities').child(newData.child('community').val()).exists() && (!newData.child('isDemo').exists() || auth.token.role == 'admin')) || (data.exists() && newData.exists() && newData.child('title').val() == data.child('title').val() && newData.child('body').val() == data.child('body').val() && newData.child('community').val() == data.child('community').val() && newData.child('authorId').val() == data.child('authorId').val() && newData.child('authorName').val() == data.child('authorName').val() && newData.child('createdAt').val() == data.child('createdAt').val()) || (data.exists() && !newData.exists() && (data.child('authorId').val() == auth.uid || auth.token.role == 'moderator' || auth.token.role == 'admin')))",
         ".validate": "newData.hasChildren(['title', 'body', 'community', 'authorId', 'authorName', 'score', 'commentCount', 'createdAt']) && newData.child('title').isString() && newData.child('title').val().length <= 140 && newData.child('body').isString() && newData.child('body').val().length <= 10000 && newData.child('authorId').isString() && newData.child('score').isNumber() && newData.child('commentCount').isNumber()"
       }
     },
     "comments": {
+      ".read": "auth != null",
       "$postId": {
         ".read": "auth != null",
         "$commentId": {
@@ -27,6 +43,7 @@
       }
     },
     "votes": {
+      ".read": "auth != null",
       "$postId": {
         "$uid": {
           ".read": "auth != null",
@@ -37,7 +54,40 @@
     },
     "communities": {
       ".read": "auth != null",
-      ".write": "auth != null && (auth.token.role == 'moderator' || auth.token.role == 'admin')"
+      ".write": "auth != null && auth.token.role == 'admin'",
+      "$communityId": {
+        ".validate": "newData.hasChildren(['name', 'description', 'category']) && newData.child('name').isString() && newData.child('description').isString() && newData.child('category').isString() && (!newData.child('memberCount').exists() || newData.child('memberCount').isNumber())"
+      }
+    },
+    "communitySubscriptions": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        "$communityId": {
+          ".write": "auth != null && auth.uid == $uid && (!newData.exists() || (newData.val() == true && root.child('communities').child($communityId).exists()))",
+          ".validate": "newData.val() == true"
+        }
+      }
+    },
+    "notifications": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        "$notificationId": {
+          ".write": "auth != null && auth.uid == $uid && data.exists() && newData.child('type').val() == data.child('type').val() && newData.child('postId').val() == data.child('postId').val() && newData.child('community').val() == data.child('community').val() && newData.child('postTitle').val() == data.child('postTitle').val() && newData.child('authorName').val() == data.child('authorName').val() && newData.child('createdAt').val() == data.child('createdAt').val() && newData.child('read').val() == true",
+          ".validate": "newData.hasChildren(['type', 'postId', 'community', 'postTitle', 'authorName', 'createdAt', 'read']) && newData.child('type').val() == 'new_post' && newData.child('postId').isString() && newData.child('community').isString() && newData.child('postTitle').isString() && newData.child('authorName').isString() && newData.child('createdAt').isNumber() && newData.child('read').isBoolean()"
+        }
+      }
+    },
+    "notificationDevices": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        "$deviceId": {
+          ".write": "auth != null && auth.uid == $uid",
+          ".validate": "newData.hasChildren(['token', 'platform', 'updatedAt']) && newData.child('token').isString() && newData.child('platform').val() in ['web', 'android', 'ios'] && newData.child('updatedAt').isNumber()"
+        }
+      }
+    },
+    "infos": {
+      ".read": "auth != null"
     }
   }
 }

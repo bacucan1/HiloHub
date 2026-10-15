@@ -1,0 +1,201 @@
+:host {
+  --sub-ink: #202c2a;
+  --sub-muted: #687571;
+  --sub-accent: #35665a;
+  --sub-border: #e3e8e5;
+  --sub-canvas: #f7f8f7;
+  --sub-surface: #fff;
+}
+
+.subscription-header ion-toolbar {
+  --background: var(--sub-surface);
+  --border-color: var(--sub-border);
+  --color: var(--sub-ink);
+  border-bottom: 1px solid var(--sub-border);
+}
+
+.subscription-content { --background: var(--sub-canvas); }
+
+.subscription-shell {
+  width: min(100%, 1040px);
+  margin: 0 auto;
+  padding: clamp(32px, 7vw, 72px) 16px 48px;
+}
+
+.subscription-intro {
+  max-width: 660px;
+  margin: 0 auto clamp(30px, 5vw, 48px);
+  text-align: center;
+}
+
+.eyebrow, .plan-kicker, .current-plan-label {
+  color: var(--sub-accent);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.eyebrow { margin: 0 0 16px; }
+
+.subscription-intro h1 {
+  margin: 0;
+  color: var(--sub-ink);
+  font-family: var(--app-font-heading);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 600;
+  letter-spacing: -.045em;
+  line-height: 1.12;
+}
+
+.subscription-intro > p:last-child {
+  max-width: 530px;
+  margin: 16px auto 0;
+  color: var(--sub-muted);
+  font-size: .98rem;
+  line-height: 1.7;
+}
+
+.plans {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 18px;
+}
+
+.plan-card {
+  display: flex;
+  flex-direction: column;
+  padding: 26px 24px 18px;
+  border: 1px solid var(--sub-border);
+  border-radius: 12px;
+  background: var(--sub-surface);
+  box-shadow: 0 4px 18px rgba(33, 48, 42, .035);
+}
+
+.plan-kicker { margin: 0 0 10px; color: #82908a; font-size: .62rem; }
+
+.plan-card h2 {
+  margin: 0;
+  color: var(--sub-ink);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -.015em;
+}
+
+.plan-price { display: flex; align-items: baseline; gap: 6px; margin: 18px 0 0; color: var(--sub-ink); }
+
+.price-amount {
+  font-size: clamp(1.8rem, 3vw, 2.15rem);
+  font-weight: 600;
+  letter-spacing: -.055em;
+  line-height: 1.1;
+}
+
+.price-period { color: var(--sub-muted); font-size: .82rem; }
+
+.plan-description {
+  min-height: 44px;
+  margin: 12px 0 20px;
+  color: var(--sub-muted);
+  font-size: .86rem;
+  line-height: 1.55;
+}
+
+.plan-divider { height: 1px; margin-bottom: 14px; background: var(--sub-border); }
+.paypal-button { min-height: 42px; }
+
+.payment-caption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 12px 0 0;
+  color: #89938f;
+  font-size: .7rem;
+}
+
+.current-plan {
+  margin: 0 auto 28px;
+  padding: 18px 20px;
+  border: 1px solid #dce6e1;
+  border-radius: 10px;
+  background: #f1f5f2;
+}
+
+.current-plan ion-card-content { display: flex; width: 100%; align-items: center; gap: 12px; padding: 0; }
+.current-plan-copy { flex: 1; }
+.current-plan-label { margin: 0 0 4px; color: var(--sub-muted); font-size: .6rem; }
+.current-plan h2 { margin: 0; color: var(--sub-ink); font-size: .98rem; font-weight: 600; }
+
+.current-plan ion-card-content > p {
+  margin: 0;
+  color: var(--sub-muted);
+  font-size: .78rem;
+  line-height: 1.5;
+}
+
+.status-pill {
+  padding: 5px 10px;
+  border: 1px solid #d3e4da;
+  border-radius: 999px;
+  background: #f8fbf9;
+  color: #356650;
+  font-size: .72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-inactive { border-color: #e4e6e5; background: #f8f8f8; color: #707a76; }
+
+.setup-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto 22px;
+  padding: 12px 15px;
+  border: 1px solid var(--sub-border);
+  border-radius: 8px;
+  background: #f0f3f1;
+  color: var(--sub-muted);
+}
+
+.setup-notice ion-icon { color: var(--sub-accent); }
+.setup-notice p { margin: 0; font-size: .82rem; }
+
+.billing-note {
+  margin: 22px 0 0;
+  color: #818b87;
+  font-size: .73rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.billing-note p { margin: 4px 0; }
+
+.error-message {
+  margin: 0 0 18px;
+  padding: 12px 14px;
+  border: 1px solid #edd6d4;
+  border-radius: 8px;
+  background: #fbf3f2;
+  color: var(--ion-color-danger);
+  font-size: .85rem;
+  line-height: 1.5;
+}
+
+.loading-state { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 22px; color: var(--sub-muted); font-size: .85rem; }
+.loading-state ion-spinner { width: 18px; height: 18px; color: var(--sub-accent); }
+@media (max-width: 760px) {
+  .plans { grid-template-columns: 1fr; gap: 12px; max-width: 480px; margin: 0 auto; }
+  .plan-card { padding: 22px 20px 16px; }
+  .plan-description { min-height: 0; }
+  .plan-description { margin-bottom: 16px; }
+  .current-plan ion-card-content { flex-wrap: wrap; }
+  .current-plan ion-card-content > p { flex-basis: 100%; }
+}
+
+@media (max-width: 420px) {
+  .desktop-break { display: none; }
+  .subscription-intro { text-align: left; }
+  .subscription-intro > p:last-child { margin-left: 0; }
+}

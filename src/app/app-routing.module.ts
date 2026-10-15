@@ -19,6 +19,21 @@ const routes: Routes = [
     loadChildren: () => import('./team/team.module').then(m => m.TeamPageModule)
   },
   {
+    path: 'subscription',
+    canActivate: [authGuard],
+    loadChildren: () => import('./subscription/subscription.module').then(m => m.SubscriptionPageModule)
+  },
+  {
+    path: 'communities',
+    canActivate: [authGuard],
+    loadChildren: () => import('./communities/communities.module').then(m => m.CommunitiesPageModule)
+  },
+  {
+    path: 'notifications',
+    canActivate: [authGuard],
+    loadChildren: () => import('./notifications/notifications.module').then(m => m.NotificationsPageModule)
+  },
+  {
     path: 'admin',
     canActivate: [authGuard, adminGuard],
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminPageModule)

@@ -38,13 +38,13 @@ export class SocialService {
   private readonly db = getDatabase(firebaseApp);
   private readonly auth = getAuth(firebaseApp);
 
-  watchPosts(callback: (posts: Post[]) => void): () => void {
+  watchPosts(callback: (posts: Post[]) => void, onError?: (error: Error) => void): () => void {
     return onValue(ref(this.db, 'posts'), (snapshot) => {
       const posts = this.snapshotChildren<Post>(snapshot).sort(
         (first, second) => second.createdAt - first.createdAt
       );
       callback(posts);
-    });
+    }, onError);
   }
 
   watchPost(postId: string, callback: (post: Post | null) => void): () => void {
@@ -79,7 +79,10 @@ export class SocialService {
       createdAt: serverTimestamp()
     });
 
-    return postRef.key as string;
+    if (!postRef.key) {
+      throw new Error('database/post-id-missing');
+    }
+    return postRef.key;
   }
 
   async createComment(postId: string, body: string): Promise<void> {

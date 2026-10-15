@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
-import { getApps, initializeApp, cert } from 'firebase-admin/app';
+import { initializeApp, cert } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
+import { getDatabase } from 'firebase-admin/database';
 
 const [, , uid, role] = process.argv;
 const validRoles = ['user', 'moderator', 'admin'];
@@ -15,9 +16,14 @@ const serviceAccount = JSON.parse(
 );
 
 initializeApp({
-  credential: cert(serviceAccount)
+  credential: cert(serviceAccount),
+  databaseURL: process.env.FIREBASE_DATABASE_URL
+    || `https://${serviceAccount.project_id}-default-rtdb.firebaseio.com`
 });
 
-await getAuth().setCustomUserClaims(uid, { role });
+const auth = getAuth();
+const user = await auth.getUser(uid);
+await auth.setCustomUserClaims(uid, { ...user.customClaims, role });
+await getDatabase().ref(`users/${uid}`).update({ role });
 
 console.log(`Rol "${role}" asignado al usuario ${uid}`);

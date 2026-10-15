@@ -31,6 +31,16 @@ export class DetailPage {
     this.watchPost();
   }
 
+  initials(name: string): string {
+    return name
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part.charAt(0).toUpperCase())
+      .join('');
+  }
+
   ngOnDestroy(): void {
     this.stopWatchingPost?.();
     this.stopWatchingComments?.();

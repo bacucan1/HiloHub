@@ -1,37 +1,48 @@
-.admin-header ion-toolbar { --background: #173f35; --color: #f4f1df; --border-width: 0; }
-.admin-content { --background: linear-gradient(160deg, #f4f6ee 0%, #e4ece1 100%); }
-.admin-shell { max-width: 900px; margin: 0 auto; }
-.admin-hero { padding: 24px; border-radius: 20px; color: #f7f2dc; background: linear-gradient(130deg, #173f35, #28674e 68%, #bf8036); box-shadow: 0 14px 28px #1c493127; animation: rise-in 320ms ease-out; }
-.eyebrow { margin: 0 0 7px; color: #b5833e; font-size: .72rem; font-weight: 800; letter-spacing: 1.15px; text-transform: uppercase; }
-.admin-hero .eyebrow { color: #f0dca5; }
-.admin-hero h1 { margin: 0; font-family: var(--app-font-heading); font-size: clamp(1.45rem, 5vw, 2.3rem); line-height: 1.1; }
-.admin-hero > p:not(.eyebrow) { color: #e2eadf; }
-.stats-row { display: flex; gap: 28px; margin-top: 22px; }
-.stats-row div { display: flex; flex-direction: column; }
-.stats-row strong { font-size: 1.8rem; line-height: 1; }
-.stats-row span { margin-top: 5px; color: #d7e2d4; font-size: .78rem; }
-.admin-section { margin-top: 22px; }
-.section-heading { display: flex; align-items: center; justify-content: space-between; margin: 0 4px 10px; }
-.section-heading h2 { margin: 0; color: #1c4032; font-family: var(--app-font-heading); font-size: 1.25rem; }
-.section-heading > ion-icon { color: #2f7959; font-size: 1.8rem; }
-.admin-list { padding: 0; overflow: hidden; border-radius: 16px; background: #ffffffdc; box-shadow: 0 8px 22px #224c3b14; }
-.admin-list ion-item { --background: transparent; --padding-start: 12px; --inner-padding-end: 8px; border-bottom: 1px solid #dfe8df; }
+.admin-header ion-toolbar { --background: #fff; --color: var(--app-ink); --border-color: var(--app-border); border-bottom: 1px solid var(--app-border); }
+.admin-content { --background: var(--app-canvas); }
+.admin-shell { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; max-width: 1180px; margin: 0 auto; padding: 26px 20px 44px; }
+
+.admin-hero {
+  grid-column: 1 / -1;
+  padding: clamp(22px, 4vw, 34px);
+  border-radius: 12px;
+  background: #263e37;
+  color: #fff;
+}
+
+.eyebrow { margin: 0 0 7px; color: #b8c9c1; font-size: .65rem; font-weight: 700; letter-spacing: .12em; }
+.admin-hero h1 { margin: 0; color: #fff; font-family: var(--app-font-heading); font-size: clamp(1.5rem, 4vw, 2.1rem); font-weight: 600; letter-spacing: -.035em; }
+.admin-hero > p:not(.eyebrow) { max-width: 580px; margin: 9px 0 0; color: #d4dfda; font-size: .88rem; line-height: 1.55; }
+.stats-row { display: flex; gap: 26px; margin-top: 24px; }
+.stats-row div { display: flex; flex-direction: column; gap: 4px; }
+.stats-row strong { font-size: 1.5rem; font-weight: 600; line-height: 1; }
+.stats-row span { color: #cad7d1; font-size: .72rem; }
+.admin-section { min-width: 0; }
+.section-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 3px 10px; }
+.section-heading .eyebrow { margin-bottom: 5px; color: var(--app-green-700); }
+.section-heading h2 { margin: 0; color: var(--app-ink); font-family: var(--app-font-heading); font-size: 1.12rem; font-weight: 600; }
+.section-count { display: grid; min-width: 26px; height: 26px; place-items: center; padding: 0 7px; border-radius: 999px; background: #e9efeb; color: #53645d; font-size: .7rem; font-weight: 600; }
+.admin-list { padding: 0; overflow: hidden; border: 1px solid var(--app-border); border-radius: 10px; background: #fff; }
+.admin-list ion-item { --background: #fff; --padding-start: 12px; --inner-padding-end: 8px; border-bottom: 1px solid var(--app-border); }
 .admin-list ion-item:last-child { border-bottom: 0; }
 .admin-list ion-label { min-width: 0; }
-.admin-list h3 { margin: 0 0 3px; color: #234936; font-weight: 750; }
-.admin-list p { margin: 0; color: #527060; font-size: .85rem; }
-.admin-list small { color: #819188; font-size: .68rem; }
-.admin-list small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.avatar-letter { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 50%; color: #f5f1dc; background: #2f7959; font-weight: 800; }
-.admin-list ion-select { min-width: 112px; font-size: .8rem; }
-.post-meta { color: #b07832 !important; font-size: .72rem !important; font-weight: 700; }
-.empty-copy, .admin-note { padding: 14px; color: #5a7062; font-size: .86rem; }
-.admin-note { margin: 10px 4px 0; padding: 0; line-height: 1.45; }
-@keyframes rise-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.admin-list h3 { margin: 0 0 4px; color: var(--app-ink); font-size: .84rem; font-weight: 600; }
+.admin-list p { margin: 0; color: var(--app-ink-muted); font-size: .76rem; line-height: 1.45; }
+.admin-list small { display: block; overflow: hidden; margin-top: 3px; color: #88928d; font-size: .65rem; text-overflow: ellipsis; white-space: nowrap; }
+.avatar-letter { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 9px; background: #e8efeb; color: var(--app-green-800); font-size: .82rem; font-weight: 600; }
+.admin-list ion-select { min-width: 108px; color: #4a5852; font-size: .75rem; }
+.admin-list ion-button { --color: var(--ion-color-danger); }
+.post-meta { margin: 0 0 5px !important; color: var(--app-green-800) !important; font-size: .67rem !important; font-weight: 600; }
+.empty-copy, .admin-note { padding: 14px; color: var(--app-ink-muted); font-size: .82rem; line-height: 1.5; }
+.admin-note { margin: 9px 3px 0; padding: 0; font-size: .73rem; }
 
-@media (max-width: 480px) {
-	.admin-hero { padding: 18px; border-radius: 16px; }
-	.admin-list ion-item { --padding-start: 8px; --inner-padding-end: 4px; }
-	.admin-list ion-select { min-width: 92px; max-width: 104px; padding-inline: 2px; font-size: .74rem; }
-	.admin-list ion-button { min-width: 40px; min-height: 44px; }
+@media (max-width: 760px) {
+  .admin-shell { grid-template-columns: 1fr; gap: 20px; padding: 18px 14px 32px; }
+  .admin-hero { padding: 22px; }
+}
+
+@media (max-width: 420px) {
+  .admin-list ion-item { --padding-start: 7px; --inner-padding-end: 3px; }
+  .admin-list ion-select { min-width: 90px; max-width: 102px; padding-inline: 2px; font-size: .7rem; }
+  .admin-list ion-button { min-width: 38px; }
 }

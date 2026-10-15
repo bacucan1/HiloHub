@@ -1,89 +1,154 @@
 <ion-header [translucent]="true" class="home-header">
   <ion-toolbar>
-    <ion-title>InfoHub</ion-title>
+    <ion-title>
+      <span class="brand-lockup"><span class="brand-symbol">H</span>HiloHub</span>
+    </ion-title>
     <ion-buttons slot="end">
-      <ion-button fill="clear" color="light" aria-label="Ver comunidades" routerLink="/team">
+      <ion-button fill="clear" aria-label="Explorar comunidades" routerLink="/communities">
         <ion-icon slot="icon-only" name="people-outline"></ion-icon>
       </ion-button>
-      <ion-button *ngIf="role === 'admin'" fill="clear" color="light" aria-label="Abrir administración" routerLink="/admin">
+      <ion-button fill="clear" aria-label="Ver notificaciones" routerLink="/notifications">
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+        <ion-badge *ngIf="unreadNotificationCount > 0" class="notification-badge">{{ unreadNotificationCount > 99 ? '99+' : unreadNotificationCount }}</ion-badge>
+      </ion-button>
+      <ion-button fill="clear" aria-label="Ver suscripciones" routerLink="/subscription">
+        <ion-icon slot="icon-only" name="card-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" aria-label="Ver equipo" routerLink="/team">
+        <ion-icon slot="icon-only" name="people-outline"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="role === 'admin'" fill="clear" aria-label="Abrir administración" routerLink="/admin">
         <ion-icon slot="icon-only" name="shield-checkmark-outline"></ion-icon>
       </ion-button>
-      <ion-button fill="clear" color="light" aria-label="Cerrar sesión" (click)="logout()">
+      <ion-button fill="clear" aria-label="Cerrar sesión" (click)="logout()">
         <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
       </ion-button>
-      <ion-button fill="solid" color="light" class="create-button" (click)="addPost()">
-        <ion-icon slot="start" name="add-circle"></ion-icon>
-        <span class="create-label">Publicar</span>
+      <ion-button fill="solid" class="create-button" (click)="addPost()">
+        <ion-icon slot="start" name="add-outline"></ion-icon>
+        <span>Publicar</span>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="home-content">
-  <div class="home-shell ion-padding">
-    <section class="hero">
-      <div class="hero-topline">
-        <div>
-          <p class="eyebrow">InfoHub · espacio educativo</p>
-          <h1>Aprende en comunidad</h1>
-        </div>
-        <span class="role-badge"><ion-icon name="ribbon-outline"></ion-icon>{{ role }}</span>
-      </div>
-      <p class="subtitle">Comparte preguntas, ideas y recursos con una comunidad que aprende contigo.</p>
-      <div class="hero-metrics" aria-label="Resumen de la comunidad">
-        <span><strong>{{ posts.length }}</strong> publicaciones</span>
-        <span><strong>{{ communityCount }}</strong> comunidades</span>
-      </div>
-    </section>
-
-    <section class="feed-tools" aria-label="Buscar y filtrar publicaciones">
-      <ion-searchbar [(ngModel)]="searchTerm" placeholder="Buscar temas, autores o comunidades" inputmode="search" show-clear-button="focus"></ion-searchbar>
-      <ion-segment [(ngModel)]="selectedFeed" mode="md" aria-label="Orden del feed">
-        <ion-segment-button value="recent"><ion-label>Recientes</ion-label></ion-segment-button>
-        <ion-segment-button value="popular"><ion-label>Más útiles</ion-label></ion-segment-button>
-        <ion-segment-button value="mine"><ion-label>Mis aportes</ion-label></ion-segment-button>
-      </ion-segment>
-    </section>
-
-    <div class="feed-heading">
-      <div><p class="eyebrow">Conversaciones activas</p><h2>{{ selectedFeed === 'mine' ? 'Mis aportes' : selectedFeed === 'popular' ? 'Lo más útil' : 'Últimas publicaciones' }}</h2></div>
-      <span>{{ filteredPosts.length }} resultados</span>
-    </div>
-
-    <ion-list class="info-list" *ngIf="filteredPosts.length > 0; else emptyState">
-      <ion-item-sliding *ngFor="let post of filteredPosts; trackBy: trackByPost">
-        <ion-item button detail="false" [routerLink]="['/detail', post.id]" class="info-item" lines="none">
-          <div class="post-vote" slot="start">
-            <ion-icon name="trending-up-outline"></ion-icon>
-            <strong>{{ post.score }}</strong>
+  <div class="home-shell">
+    <aside class="left-rail" aria-label="Tu perfil y accesos">
+      <section class="profile-card">
+        <div class="profile-cover"></div>
+        <div class="profile-body">
+          <div class="profile-avatar">{{ userInitials }}</div>
+          <h1>{{ userDisplayName }}</h1>
+          <p class="profile-email">{{ userEmail }}</p>
+          <span class="profile-role">{{ roleLabel }}</span>
+          <div class="profile-stats">
+            <span>Mis publicaciones<strong>{{ myPostCount }}</strong></span>
+            <span>Siguiendo<strong>{{ communityCount }}</strong></span>
           </div>
-          <ion-label>
-            <p class="post-meta"><span>r/{{ post.community }}</span> · {{ post.authorName }} · {{ post.createdAt | date:'d MMM, HH:mm' }}</p>
-            <h2>{{ post.title }}</h2>
-            <p>{{ post.body }}</p>
-            <small><ion-icon name="chatbubble-outline"></ion-icon> {{ post.commentCount }} respuestas <span class="read-label">Abrir conversación <ion-icon name="arrow-forward-outline"></ion-icon></span></small>
-          </ion-label>
-        </ion-item>
-
-        <ion-item-options side="end" *ngIf="post.authorId === authService.currentUser?.uid || role !== 'user'">
-          <ion-item-option class="delete-swipe-option" (click)="delete(post)">
-            <ion-icon name="trash"></ion-icon>
-            Eliminar
-          </ion-item-option>
-        </ion-item-options>
-      </ion-item-sliding>
-    </ion-list>
-
-    <ng-template #emptyState>
-      <section class="empty-state">
-        <ion-icon name="sparkles-outline"></ion-icon>
-        <h2>Aún no hay publicaciones</h2>
-        <p>Abre la conversación publicando algo para tu comunidad.</p>
-        <ion-button shape="round" (click)="addPost()">
-          <ion-icon slot="start" name="add"></ion-icon>
-          Crear publicación
-        </ion-button>
+        </div>
+        <button class="profile-link" type="button" (click)="selectFeed('mine')">
+          Ver mis publicaciones <ion-icon name="arrow-forward-outline"></ion-icon>
+        </button>
       </section>
-    </ng-template>
+
+      <nav class="side-navigation" aria-label="Navegación">
+        <button type="button" (click)="clearFilters()"><ion-icon name="home-outline"></ion-icon>Inicio</button>
+        <button type="button" (click)="selectFeed('popular')"><ion-icon name="trending-up-outline"></ion-icon>Conversaciones populares</button>
+        <button type="button" (click)="selectFeed('following')"><ion-icon name="people-outline"></ion-icon>Mis comunidades</button>
+        <a routerLink="/communities"><ion-icon name="search-outline"></ion-icon>Explorar comunidades</a>
+        <a routerLink="/notifications"><ion-icon name="notifications-outline"></ion-icon>Notificaciones<span *ngIf="unreadNotificationCount" class="navigation-count">{{ unreadNotificationCount }}</span></a>
+        <a routerLink="/team"><ion-icon name="people-outline"></ion-icon>Acerca del equipo</a>
+        <a routerLink="/subscription"><ion-icon name="heart-outline"></ion-icon>Apoya HiloHub</a>
+        <a *ngIf="role === 'moderator' || role === 'admin'" routerLink="/create"><ion-icon name="shield-checkmark-outline"></ion-icon>Configurar moderación</a>
+        <a *ngIf="role === 'admin'" routerLink="/admin"><ion-icon name="shield-checkmark-outline"></ion-icon>Administración</a>
+      </nav>
+    </aside>
+
+    <main class="feed-column">
+      <section class="welcome-strip">
+        <div>
+          <p class="eyebrow">HILOHUB · APRENDIZAJE EN COMUNIDAD</p>
+          <h1>¿Qué estás aprendiendo hoy?</h1>
+        </div>
+        <div class="community-total"><strong>{{ posts.length }}</strong><span>conversaciones</span></div>
+      </section>
+
+      <section class="composer-card" aria-label="Crear publicación">
+        <div class="composer-avatar">{{ userInitials }}</div>
+        <button class="composer-prompt" type="button" (click)="addPost()">Comparte una pregunta o una idea…</button>
+        <button class="composer-submit" type="button" (click)="addPost()" aria-label="Crear publicación">
+          <ion-icon name="create-outline"></ion-icon><span>Publicar</span>
+        </button>
+      </section>
+
+      <section class="feed-controls" aria-label="Buscar y filtrar publicaciones">
+        <ion-searchbar [(ngModel)]="searchTerm" placeholder="Buscar publicaciones" inputmode="search" show-clear-button="focus" aria-label="Buscar publicaciones"></ion-searchbar>
+        <ion-segment [(ngModel)]="selectedFeed" mode="md" aria-label="Filtrar publicaciones">
+          <ion-segment-button value="recent"><ion-label>Recientes</ion-label></ion-segment-button>
+          <ion-segment-button value="popular"><ion-label>Populares</ion-label></ion-segment-button>
+          <ion-segment-button value="following"><ion-label>Mis comunidades</ion-label></ion-segment-button>
+          <ion-segment-button value="mine"><ion-label>Mis publicaciones</ion-label></ion-segment-button>
+        </ion-segment>
+      </section>
+
+      <p class="page-error" role="alert" *ngIf="feedError">{{ feedError }}</p>
+
+      <div class="feed-heading">
+        <div><p class="eyebrow">TU RED</p><h2>{{ feedTitle }}</h2></div>
+        <span class="result-count">{{ filteredPosts.length }} resultados</span>
+      </div>
+
+      <ion-list class="info-list" *ngIf="filteredPosts.length > 0; else emptyState">
+        <ion-item-sliding *ngFor="let post of filteredPosts; trackBy: trackByPost">
+          <ion-item button detail="false" [routerLink]="['/detail', post.id]" class="info-item" lines="none">
+            <div class="post-vote" slot="start" aria-label="Puntuación">
+              <ion-icon name="arrow-up-outline"></ion-icon><strong>{{ post.score }}</strong>
+            </div>
+            <ion-label>
+              <p class="post-meta"><button class="community-label" type="button" (click)="filterByCommunity($event, post.community)">r/{{ post.community }}</button><span>·</span>{{ post.authorName }}<span>·</span>{{ post.createdAt | date:'d MMM, HH:mm' }}</p>
+              <h2>{{ post.title }}</h2>
+              <p>{{ post.body }}</p>
+              <small><ion-icon name="chatbubble-outline"></ion-icon>{{ post.commentCount }} {{ post.commentCount === 1 ? 'respuesta' : 'respuestas' }}<span class="read-label">Ver conversación <ion-icon name="arrow-forward-outline"></ion-icon></span></small>
+            </ion-label>
+          </ion-item>
+          <ion-item-options side="end" *ngIf="post.authorId === authService.currentUser?.uid || role !== 'user'">
+            <ion-item-option class="delete-swipe-option" (click)="delete(post)">
+              <ion-icon name="trash"></ion-icon>Eliminar
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+
+      <ng-template #emptyState>
+        <section class="empty-state">
+          <div class="empty-icon"><ion-icon [name]="posts.length ? 'search-outline' : 'chatbubbles-outline'"></ion-icon></div>
+          <h2>{{ selectedFeed === 'following' && !subscriptions.length ? 'Sigue una comunidad para empezar' : posts.length ? 'No hay coincidencias' : 'Empieza la conversación' }}</h2>
+          <p>{{ selectedFeed === 'following' && !subscriptions.length ? 'Encuentra comunidades sobre tus temas favoritos y sus publicaciones aparecerán aquí.' : posts.length ? 'Prueba otra búsqueda o selecciona un filtro distinto.' : 'Comparte una pregunta o idea para abrir el diálogo.' }}</p>
+          <ion-button *ngIf="selectedFeed === 'following' && !subscriptions.length" routerLink="/communities"><ion-icon slot="start" name="search-outline"></ion-icon>Explorar comunidades</ion-button>
+          <ion-button *ngIf="!posts.length && selectedFeed !== 'following'" (click)="addPost()"><ion-icon slot="start" name="add-outline"></ion-icon>Crear publicación</ion-button>
+        </section>
+      </ng-template>
+    </main>
+
+    <aside class="right-rail" aria-label="Información de la comunidad">
+      <section class="rail-card communities-card">
+        <div class="rail-heading"><h2>Comunidades activas</h2><span>{{ trendingCommunities.length }}</span></div>
+        <button class="community-row" type="button" *ngFor="let community of trendingCommunities" (click)="filterByCommunity($event, community.name)" [class.selected]="selectedCommunity === community.name">
+          <span class="community-avatar">r/</span>
+          <span class="community-copy"><strong>{{ community.name }}</strong><small>{{ community.count }} {{ community.count === 1 ? 'publicación' : 'publicaciones' }}</small></span>
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </button>
+        <p class="no-communities" *ngIf="trendingCommunities.length === 0">Las comunidades aparecerán cuando haya publicaciones.</p>
+        <button class="clear-community" type="button" *ngIf="selectedCommunity" (click)="clearFilters()">Quitar filtro</button>
+      </section>
+
+      <section class="rail-card about-card">
+        <p class="eyebrow">UN ESPACIO PARA COMPARTIR</p>
+        <h2>Aprender juntos cambia la conversación.</h2>
+        <p>HiloHub conecta preguntas, conocimientos y personas curiosas.</p>
+        <a routerLink="/team">Conoce el proyecto <ion-icon name="arrow-forward-outline"></ion-icon></a>
+      </section>
+      <p class="footer-note">HiloHub · Comunidad y aprendizaje</p>
+    </aside>
   </div>
 </ion-content>

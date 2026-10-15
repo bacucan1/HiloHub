@@ -1,0 +1,62 @@
+<ion-header class="notifications-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Notificaciones</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [disabled]="!unreadCount || saving" (click)="markAllRead()">Marcar leídas</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="notifications-content">
+  <main class="notifications-shell">
+    <section class="notifications-intro">
+      <div>
+        <p class="eyebrow">TU ACTIVIDAD</p>
+        <h1>Notificaciones</h1>
+        <p>Conoce las nuevas conversaciones de las comunidades que sigues.</p>
+      </div>
+      <span class="unread-total" *ngIf="unreadCount">{{ unreadCount }} sin leer</span>
+    </section>
+
+    <section class="push-settings">
+      <span class="push-icon"><ion-icon name="notifications-outline"></ion-icon></span>
+      <div>
+        <strong>Notificaciones push</strong>
+        <p>{{ device ? 'Este dispositivo está activado para recibir avisos.' : 'Recibe avisos de nuevas publicaciones aunque no tengas HiloHub abierto.' }}</p>
+      </div>
+      <ion-button size="small" [fill]="device ? 'outline' : 'solid'" [disabled]="saving" (click)="togglePush()">
+        <ion-spinner *ngIf="saving" slot="start" name="crescent"></ion-spinner>
+        <ion-icon *ngIf="!saving" slot="start" [name]="device ? 'checkmark-outline' : 'notifications-outline'"></ion-icon>
+        {{ device ? 'Desactivar' : 'Activar' }}
+      </ion-button>
+    </section>
+
+    <p class="page-error" role="alert" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <div class="loading-state" *ngIf="loading">
+      <ion-spinner name="crescent" aria-label="Cargando notificaciones"></ion-spinner>
+      <span>Cargando notificaciones…</span>
+    </div>
+
+    <section class="notification-list" *ngIf="!loading && notifications.length">
+      <a class="notification-item" *ngFor="let notification of notifications; trackBy: trackByNotification" [routerLink]="['/detail', notification.postId]" [class.unread]="!notification.read" (click)="openNotification(notification)">
+        <span class="notification-icon"><ion-icon name="chatbubbles-outline"></ion-icon></span>
+        <span class="notification-copy">
+          <span><strong>{{ notification.authorName }}</strong> publicó en <strong>r/{{ notification.community }}</strong></span>
+          <span class="notification-title">{{ notification.postTitle }}</span>
+          <time>{{ notification.createdAt | date:'d MMM, y · HH:mm' }}</time>
+        </span>
+        <span class="unread-dot" *ngIf="!notification.read" aria-label="Sin leer"></span>
+      </a>
+    </section>
+
+    <section class="empty-state" *ngIf="!loading && !notifications.length">
+      <ion-icon name="notifications-off-outline"></ion-icon>
+      <h2>Aún no tienes avisos</h2>
+      <p>Cuando haya una nueva publicación en una comunidad que sigues, aparecerá aquí.</p>
+      <ion-button routerLink="/communities">Explorar comunidades</ion-button>
+    </section>
+  </main>
+</ion-content>

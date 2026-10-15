@@ -3,29 +3,29 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Editar Registro</ion-title>
+    <ion-title>Editar registro</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="form-content">
   <div class="form-shell ion-padding">
     <section class="form-hero">
-      <p class="eyebrow">Modificacion</p>
+      <p class="eyebrow">EDICIÓN</p>
       <h1>Actualizar registro</h1>
-      <p>Edita los campos necesarios y guarda los cambios.</p>
+      <p>Revisa los cambios antes de guardarlos.</p>
     </section>
 
     <form [formGroup]="infoForm" (ngSubmit)="updateInfo()" class="info-form">
       <ion-list lines="none" class="form-list">
         <ion-item class="form-item">
-          <ion-input type="text" label="Titulo" labelPlacement="stacked" formControlName="info_title"></ion-input>
+          <ion-input id="edit-title" type="text" label="Título" labelPlacement="stacked" formControlName="info_title"></ion-input>
         </ion-item>
         <ion-text color="danger" *ngIf="infoForm.controls['info_title'].invalid && infoForm.controls['info_title'].touched">
           El titulo es obligatorio.
         </ion-text>
 
         <ion-item class="form-item">
-          <ion-textarea label="Descripcion" labelPlacement="stacked" formControlName="info_description" rows="4"></ion-textarea>
+          <ion-textarea id="edit-description" label="Descripción" labelPlacement="stacked" formControlName="info_description" rows="4" autoGrow="true"></ion-textarea>
         </ion-item>
         <ion-text color="danger" *ngIf="infoForm.controls['info_description'].invalid && infoForm.controls['info_description'].touched">
           La descripcion es obligatoria.
@@ -33,12 +33,11 @@
       </ion-list>
 
       <div class="actions">
-        <ion-button type="submit" shape="round" expand="block" [disabled]="!infoForm.valid">
-          <ion-icon slot="start" name="create"></ion-icon>
-          Actualizar
+        <ion-button type="submit" expand="block" [disabled]="!infoForm.valid">
+          Guardar cambios
         </ion-button>
 
-        <ion-button type="button" shape="round" expand="block" class="delete-action-btn" (click)="deleteInfo()">
+        <ion-button type="button" fill="clear" expand="block" class="delete-action-btn" (click)="deleteInfo()">
           <ion-icon slot="start" name="trash"></ion-icon>
           Eliminar
         </ion-button>

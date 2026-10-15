@@ -1,93 +1,108 @@
 <ion-content [fullscreen]="true" class="auth-content">
   <main class="auth-shell">
-    <section class="auth-intro">
-      <p class="eyebrow">InfoHub</p>
-      <h1>{{ isRegistering ? 'Crea tu cuenta' : 'Bienvenido de vuelta' }}</h1>
-      <p>Accede al espacio donde tus registros están organizados y protegidos.</p>
-    </section>
-
-    <form class="auth-form" [formGroup]="authForm" (ngSubmit)="submit()" novalidate>
-      <ion-item lines="none" class="field-item">
-        <ion-icon name="mail-outline" slot="start"></ion-icon>
-        <ion-input
-          formControlName="email"
-          type="email"
-          label="Correo electrónico"
-          labelPlacement="stacked"
-          autocomplete="email">
-        </ion-input>
-      </ion-item>
-      <p class="field-error" *ngIf="authForm.controls.email.touched && authForm.controls.email.invalid">
-        Introduce un correo válido.
-      </p>
-
-      <ion-item lines="none" class="field-item">
-        <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
-        <ion-input
-          formControlName="password"
-          type="password"
-          label="Contraseña"
-          labelPlacement="stacked"
-          autocomplete="current-password">
-        </ion-input>
-      </ion-item>
-      <p class="field-error" *ngIf="authForm.controls.password.touched && authForm.controls.password.invalid">
-        Usa al menos 6 caracteres.
-      </p>
-
-      <p class="form-error" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-      <ion-button expand="block" type="submit" class="submit-button" [disabled]="isSubmitting">
-        <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
-        <span *ngIf="!isSubmitting">{{ isRegistering ? 'Crear cuenta' : 'Iniciar sesión' }}</span>
-      </ion-button>
-
-      <ion-button
-        *ngIf="!isRegistering"
-        fill="clear"
-        size="small"
-        type="button"
-        class="reset-button"
-        [disabled]="isSubmitting"
-        (click)="resetPassword()">
-        ¿Olvidaste tu contraseña?
-      </ion-button>
-    </form>
-
-    <div class="auth-divider"><span>o continúa con</span></div>
-
-    <ion-button
-      expand="block"
-      fill="outline"
-      type="button"
-      class="google-button"
-      [disabled]="isSubmitting"
-      (click)="loginWithGoogle()">
-      <ion-icon slot="start" name="logo-google"></ion-icon>
-      Continuar con Google
-    </ion-button>
-
-    <section class="verification-note" *ngIf="verificationSent">
-      <ion-icon name="checkmark-circle-outline"></ion-icon>
-      <div>
-        <strong>Revisa tu correo</strong>
-        <p>Enviamos un enlace de verificación. Confirma tu cuenta y vuelve a iniciar sesión.</p>
-        <ion-button
-          *ngIf="currentUser"
-          fill="clear"
-          size="small"
-          type="button"
-          (click)="resendVerification()">
-          Reenviar correo
-        </ion-button>
+    <section class="auth-brand">
+      <a class="brand-mark" routerLink="/auth" aria-label="HiloHub, inicio">
+        <span class="brand-symbol"><ion-icon name="chatbubbles-outline"></ion-icon></span>
+        <span>HiloHub</span>
+      </a>
+      <div class="auth-brand-copy">
+        <p class="eyebrow">IDEAS QUE CONECTAN</p>
+        <h1>Un espacio para aprender en comunidad.</h1>
+        <p>Haz preguntas, comparte lo que sabes y encuentra personas con tus mismos intereses.</p>
+      </div>
+      <div class="brand-topics" aria-label="Explora HiloHub">
+        <span>Preguntas</span><span>Ideas</span><span>Comunidad</span>
       </div>
     </section>
 
-    <p class="switch-mode">
-      {{ isRegistering ? '¿Ya tienes una cuenta?' : '¿Aún no tienes una cuenta?' }}
-      <button type="button" (click)="toggleMode()">
-        {{ isRegistering ? 'Inicia sesión' : 'Regístrate' }}
-      </button>
-    </p>
+    <section class="auth-panel">
+      <div class="auth-intro">
+        <p class="eyebrow">{{ isRegistering ? 'ÚNETE A HILOHUB' : 'TU COMUNIDAD TE ESPERA' }}</p>
+        <h2>{{ isRegistering ? 'Crea tu cuenta' : 'Qué bueno verte' }}</h2>
+        <p>{{ isRegistering ? 'Completa tus datos para empezar.' : 'Inicia sesión para continuar.' }}</p>
+      </div>
+
+      <form class="auth-form" [formGroup]="authForm" (ngSubmit)="submit()" novalidate>
+        <ion-item lines="none" class="field-item">
+          <ion-input
+            formControlName="email"
+            type="email"
+            label="Correo electrónico"
+            labelPlacement="stacked"
+            autocomplete="email">
+          </ion-input>
+        </ion-item>
+        <p class="field-error" *ngIf="authForm.controls.email.touched && authForm.controls.email.invalid">
+          Introduce un correo válido.
+        </p>
+
+        <ion-item lines="none" class="field-item">
+          <ion-input
+            formControlName="password"
+            type="password"
+            label="Contraseña"
+            labelPlacement="stacked"
+            autocomplete="current-password">
+          </ion-input>
+        </ion-item>
+        <p class="field-error" *ngIf="authForm.controls.password.touched && authForm.controls.password.invalid">
+          Usa al menos 6 caracteres.
+        </p>
+
+        <p class="form-error" *ngIf="errorMessage" role="alert">{{ errorMessage }}</p>
+
+        <ion-button expand="block" type="submit" class="submit-button" [disabled]="isSubmitting">
+          <ion-spinner *ngIf="isSubmitting" name="crescent"></ion-spinner>
+          <span *ngIf="!isSubmitting">{{ isRegistering ? 'Crear cuenta' : 'Iniciar sesión' }}</span>
+        </ion-button>
+
+        <ion-button
+          *ngIf="!isRegistering"
+          fill="clear"
+          size="small"
+          type="button"
+          class="reset-button"
+          [disabled]="isSubmitting"
+          (click)="resetPassword()">
+          ¿Olvidaste tu contraseña?
+        </ion-button>
+      </form>
+
+      <div class="auth-divider"><span>o continúa con</span></div>
+
+      <ion-button
+        expand="block"
+        fill="outline"
+        type="button"
+        class="google-button"
+        [disabled]="isSubmitting"
+        (click)="loginWithGoogle()">
+        <ion-icon slot="start" name="logo-google"></ion-icon>
+        Continuar con Google
+      </ion-button>
+
+      <section class="verification-note" *ngIf="verificationSent">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+        <div>
+          <strong>Revisa tu correo</strong>
+          <p>Enviamos un enlace de verificación. Confirma tu cuenta y vuelve a iniciar sesión.</p>
+          <ion-button
+            *ngIf="currentUser"
+            fill="clear"
+            size="small"
+            type="button"
+            (click)="resendVerification()">
+            Reenviar correo
+          </ion-button>
+        </div>
+      </section>
+
+      <p class="switch-mode">
+        {{ isRegistering ? '¿Ya tienes una cuenta?' : '¿Aún no tienes una cuenta?' }}
+        <button type="button" (click)="toggleMode()">
+          {{ isRegistering ? 'Inicia sesión' : 'Regístrate' }}
+        </button>
+      </p>
+    </section>
   </main>
 </ion-content>

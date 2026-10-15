@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import { DataSnapshot, getDatabase, onValue, ref, remove, update } from 'firebase/database';
 import { firebaseApp } from '../firebase';
 import { AppRole } from '../auth/role.service';
@@ -42,7 +43,11 @@ export class AdminService {
   }
 
   async updateRole(uid: string, role: AppRole): Promise<void> {
-    await update(ref(this.db, `users/${uid}`), { role });
+    const setUserRole = httpsCallable<{ uid: string; role: AppRole }, { success: boolean }>(
+      getFunctions(firebaseApp),
+      'setUserRole'
+    );
+    await setUserRole({ uid, role });
   }
 
   async deleteUserProfile(uid: string): Promise<void> {

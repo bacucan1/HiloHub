@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>Detalle</ion-title>
+    <ion-title>Conversación</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -11,38 +11,58 @@
   <div class="detail-shell ion-padding">
     <section class="detail-card" *ngIf="post; else missingState">
       <div class="post-context">
-        <div class="tag"><ion-icon name="people-outline"></ion-icon><span>r/{{ post.community }}</span></div>
-        <span class="post-date">{{ post.createdAt | date:'d MMM y, HH:mm' }}</span>
+        <span class="tag"><ion-icon name="people-outline"></ion-icon> r/{{ post.community }}</span>
+        <span class="post-date"><ion-icon name="time-outline"></ion-icon>{{ post.createdAt | date:'d MMM y, HH:mm' }}</span>
       </div>
 
       <h1>{{ post.title }}</h1>
-      <p class="author-line"><ion-icon name="person-circle-outline"></ion-icon> Publicado por <strong>{{ post.authorName }}</strong></p>
+      <div class="author-line">
+        <span class="author-avatar">{{ initials(post.authorName) }}</span>
+        <span class="author-copy"><strong>{{ post.authorName }}</strong><small>Autor de la publicación</small></span>
+      </div>
       <p class="post-body">{{ post.body }}</p>
 
       <div class="post-actions">
-        <ion-button fill="outline" aria-label="Marcar como útil" (click)="vote(1)"><ion-icon slot="start" name="arrow-up-outline"></ion-icon>Útil <strong>{{ post.score }}</strong></ion-button>
-        <ion-button fill="clear" aria-label="No es útil" (click)="vote(-1)"><ion-icon slot="start" name="arrow-down-outline"></ion-icon>No es útil</ion-button>
+        <span class="action-label">¿Te resultó útil?</span>
+        <div class="vote-actions">
+          <ion-button fill="outline" aria-label="Marcar como útil" (click)="vote(1)"><ion-icon slot="start" name="thumbs-up-outline"></ion-icon>Útil <strong>{{ post.score }}</strong></ion-button>
+          <ion-button fill="clear" aria-label="Marcar como no útil" (click)="vote(-1)"><ion-icon slot="start" name="thumbs-down-outline"></ion-icon>No es útil</ion-button>
+        </div>
       </div>
 
-      <div class="discussion-heading"><div><p class="eyebrow">Aprendizaje compartido</p><h2>Conversación</h2></div><span>{{ comments.length }} respuestas</span></div>
+      <div class="discussion-heading">
+        <div><p class="eyebrow">CONVERSACIÓN</p><h2>Respuestas <span class="response-count">{{ comments.length }}</span></h2></div>
+        <span>{{ comments.length === 1 ? '1 respuesta' : comments.length + ' respuestas' }}</span>
+      </div>
       <ion-list class="comments-list" lines="none">
         <ion-item *ngFor="let comment of comments">
+          <span class="comment-avatar" slot="start">{{ initials(comment.authorName) }}</span>
           <ion-label>
             <p class="comment-author"><strong>{{ comment.authorName }}</strong><span>{{ comment.createdAt | date:'d MMM, HH:mm' }}</span></p>
             <p class="comment-body">{{ comment.body }}</p>
           </ion-label>
         </ion-item>
+        <div class="no-comments" *ngIf="comments.length === 0">
+          <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+          <strong>Aún no hay respuestas</strong>
+          <span>Inicia la conversación con una idea o una pregunta.</span>
+        </div>
       </ion-list>
 
-      <ion-item class="comment-box" lines="none">
-        <ion-textarea [(ngModel)]="commentBody" label="Tu aporte" labelPlacement="stacked" placeholder="Comparte una idea, pregunta o recurso" rows="3" maxlength="10000"></ion-textarea>
-      </ion-item>
-      <ion-button class="comment-button" expand="block" (click)="addComment()" [disabled]="!commentBody.trim()">
-        <ion-icon slot="start" name="chatbubble-ellipses"></ion-icon>
-        Comentar
-      </ion-button>
+      <div class="comment-composer">
+        <span class="composer-avatar">{{ initials(authService.currentUser?.displayName || authService.currentUser?.email || 'Tú') }}</span>
+        <div class="composer-main">
+          <ion-textarea [(ngModel)]="commentBody" placeholder="Escribe una respuesta…" rows="3" maxlength="10000" autoGrow="true" aria-label="Escribe una respuesta"></ion-textarea>
+          <div class="composer-footer">
+            <span>Comparte tu conocimiento con respeto.</span>
+            <ion-button class="comment-button" (click)="addComment()" [disabled]="!commentBody.trim()">
+              <ion-icon slot="start" name="send-outline"></ion-icon>Responder
+            </ion-button>
+          </div>
+        </div>
+      </div>
 
-      <ion-note *ngIf="canDelete()">Puedes eliminar esta publicación por ser su autor o moderador.</ion-note>
+      <ion-note *ngIf="canDelete()"><ion-icon name="shield-checkmark-outline"></ion-icon>Tienes permisos para moderar esta publicación.</ion-note>
     </section>
 
     <ng-template #missingState>

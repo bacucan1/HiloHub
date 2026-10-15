@@ -3,7 +3,19 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  paypal: {
+    clientId: '',
+    currency: 'USD',
+    plans: [
+      { id: 'essential', name: 'Hilo Esencial', price: '4.99', paypalPlanId: '' },
+      { id: 'plus', name: 'Hilo Plus', price: '9.99', paypalPlanId: '' },
+      { id: 'community', name: 'Hilo Comunidad', price: '19.99', paypalPlanId: '' }
+    ]
+  },
+  notifications: {
+    vapidKey: ''
+  }
 };
 
 /*

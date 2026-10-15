@@ -1,102 +1,32 @@
-.form-content {
-	--background: linear-gradient(170deg, #f7faf8 0%, #ebf2ed 55%, #e0ebe7 100%);
-}
-
-ion-toolbar {
-	--background: transparent;
-	--border-width: 0;
-}
-
-.form-shell {
-	max-width: 760px;
-	margin: 0 auto;
-}
-
-.form-hero {
-	padding: 20px;
-	border-radius: 20px;
-	background: linear-gradient(130deg, #d6ecdf 0%, #f7f4e8 100%);
-	color: #163b2a;
-	box-shadow: 0 14px 30px rgba(20, 61, 41, 0.12);
-}
-
-.eyebrow {
-	margin: 0;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	font-weight: 700;
-	font-size: 0.72rem;
-	color: #2a7350;
-}
-
-.form-hero h1 {
-	margin: 6px 0;
-	font-family: var(--app-font-heading);
-	font-size: clamp(1.3rem, 4vw, 1.85rem);
-}
-
-.form-hero p {
-	margin: 0;
-	color: #345646;
-}
-
-.info-form {
-	margin-top: 16px;
-	padding: 18px;
-	border-radius: 20px;
-	background: #ffffffea;
-	box-shadow: 0 10px 24px rgba(24, 50, 37, 0.09);
-}
-
-.form-list {
-	background: transparent;
-	margin-bottom: 12px;
-}
+.form-content { --background: #f6f7f6; }
+.app-page-header ion-toolbar { --background: #fff; --color: var(--app-ink); --border-color: var(--app-border); border-bottom: 1px solid var(--app-border); }
+.form-shell { max-width: 760px; margin: 0 auto; padding: 26px 18px 48px; }
+.form-hero { margin-bottom: 18px; }
+.eyebrow { margin: 0 0 8px; color: var(--app-green-700); font-size: .66rem; font-weight: 700; letter-spacing: .12em; }
+.form-hero h1 { margin: 0; color: var(--app-ink); font-family: var(--app-font-heading); font-size: clamp(1.65rem, 4vw, 2.2rem); font-weight: 600; letter-spacing: -.04em; line-height: 1.2; }
+.form-hero > p:last-child { margin: 9px 0 0; color: var(--app-ink-muted); font-size: .9rem; line-height: 1.6; }
+.info-form { padding: clamp(16px, 4vw, 26px); border: 1px solid var(--app-border); border-radius: 12px; background: #fff; box-shadow: 0 5px 18px rgba(31, 44, 39, .035); }
+.form-list { margin: 0; padding: 0; background: transparent; }
+.field-heading { display: flex; justify-content: space-between; gap: 10px; margin: 15px 2px 7px; color: #3a4741; font-size: .8rem; font-weight: 600; }
 
 .form-item {
-	--background: #f6faf8;
-	--border-color: transparent;
-	--inner-padding-end: 10px;
-	border: 1px solid #dce9e0;
-	border-radius: 14px;
-	margin-bottom: 10px;
+  --background: #fff;
+  --border-color: transparent;
+  --inner-padding-end: 12px;
+  margin-bottom: 8px;
+  border: 1px solid #dfe6e2;
+  border-radius: 8px;
 }
 
-.form-item ion-input,
-.form-item ion-textarea {
-	--color: #1f4433;
-	--label-color: #2e6248;
-	--label-color-focused: #2a7a52;
-	--highlight-color-focused: #2a7a52;
-	--placeholder-color: #6e8d7c;
-	--padding-top: 8px;
-	--padding-bottom: 8px;
-}
+.form-item:focus-within { border-color: #8fa99e; }
+.form-item ion-input, .form-item ion-textarea { --color: var(--app-ink); --label-color: #66726c; --label-color-focused: var(--app-green-800); --highlight-color-focused: var(--app-green-800); --placeholder-color: #929c97; --padding-top: 8px; --padding-bottom: 8px; }
+ion-text { display: block; margin: -2px 4px 10px; font-size: .78rem; line-height: 1.45; }
+.actions { display: grid; gap: 8px; margin-top: 18px; }
+.actions ion-button { --border-radius: 8px; margin: 0; }
+.actions ion-button[type='submit'] { --background: var(--app-green-800); }
+.delete-action-btn { --color: var(--ion-color-danger); font-weight: 600; }
 
-.form-item ion-textarea {
-	--color: #264a39;
-	--placeholder-color: #698678;
-}
-
-.actions {
-	display: grid;
-	gap: 10px;
-}
-
-ion-button[type='submit'] {
-	--background: linear-gradient(115deg, #21563a 0%, #2b8a58 100%);
-	font-weight: 700;
-}
-
-.delete-action-btn {
-	--background: linear-gradient(120deg, #972f2b 0%, #cf4f48 100%);
-	--color: #fff8f8;
-	--box-shadow: 0 12px 22px rgba(149, 47, 43, 0.28);
-	font-weight: 700;
-}
-
-ion-text {
-	display: block;
-	margin: -3px 4px 10px;
-	font-size: 0.82rem;
+@media (max-width: 480px) {
+  .form-shell { padding: 18px 12px 32px; }
+  .info-form { padding: 14px; }
 }

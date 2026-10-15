@@ -3,47 +3,47 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Centro de control</ion-title>
+    <ion-title>Administración</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="admin-content">
   <div class="admin-shell ion-padding">
     <section class="admin-hero">
-      <p class="eyebrow">Acceso administrador</p>
-      <h1>Cuida el pulso de la comunidad</h1>
-      <p>Configura los perfiles y retira contenido que incumpla las normas.</p>
+      <p class="eyebrow">CENTRO DE CONTROL</p>
+      <h1>Administración de HiloHub</h1>
+      <p>Gestiona el acceso de las personas y revisa las conversaciones de la comunidad.</p>
       <div class="stats-row">
-        <div><strong>{{ users.length }}</strong><span>perfiles</span></div>
+        <div><strong>{{ users.length }}</strong><span>usuarios</span></div>
         <div><strong>{{ posts.length }}</strong><span>publicaciones</span></div>
       </div>
     </section>
 
     <section class="admin-section">
       <div class="section-heading">
-        <div><p class="eyebrow">Acceso y confianza</p><h2>Administrar usuarios</h2></div>
-        <ion-icon name="people-circle-outline"></ion-icon>
+        <div><p class="eyebrow">ACCESO Y CONFIANZA</p><h2>Usuarios</h2></div>
+        <span class="section-count">{{ users.length }}</span>
       </div>
       <ion-list class="admin-list" *ngIf="users.length; else noUsers">
         <ion-item *ngFor="let user of users" lines="none">
           <ion-avatar slot="start"><div class="avatar-letter">{{ user.displayName.charAt(0).toUpperCase() }}</div></ion-avatar>
           <ion-label><h3>{{ user.displayName }}</h3><p>{{ user.email }}</p><small>{{ user.uid }}</small></ion-label>
-          <ion-select [value]="user.role" interface="popover" aria-label="Cambiar rol" (ionChange)="changeRole(user, $event.detail.value)">
+          <ion-select [value]="user.role" interface="popover" aria-label="Cambiar rol" [disabled]="user.uid === authService.currentUser?.uid" (ionChange)="changeRole(user, $event.detail.value)">
             <ion-select-option value="user">Usuario</ion-select-option>
             <ion-select-option value="moderator">Moderador</ion-select-option>
             <ion-select-option value="admin">Administrador</ion-select-option>
           </ion-select>
-          <ion-button fill="clear" color="danger" aria-label="Eliminar perfil" (click)="removeProfile(user)">
+          <ion-button fill="clear" color="danger" aria-label="Eliminar perfil" [disabled]="user.uid === authService.currentUser?.uid" (click)="removeProfile(user)">
             <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
           </ion-button>
         </ion-item>
       </ion-list>
       <ng-template #noUsers><p class="empty-copy">Los perfiles aparecerán cuando sus usuarios inicien sesión.</p></ng-template>
-      <p class="admin-note">El selector actualiza el perfil de la comunidad. Para activar el custom claim de Firebase, sincroniza el UID con <strong>set-role.mjs</strong> y pide al usuario volver a iniciar sesión.</p>
+      <p class="admin-note">Los cambios actualizan el custom claim de Firebase desde el servidor. La persona debe renovar su sesión para que el nuevo permiso se refleje en su cuenta.</p>
     </section>
 
     <section class="admin-section">
-      <div class="section-heading"><div><p class="eyebrow">Moderación</p><h2>Publicaciones recientes</h2></div><ion-icon name="shield-checkmark-outline"></ion-icon></div>
+      <div class="section-heading">      <div><p class="eyebrow">MODERACIÓN</p><h2>Publicaciones recientes</h2></div><span class="section-count">{{ posts.length }}</span></div>
       <ion-list class="admin-list" *ngIf="posts.length; else noPosts">
         <ion-item *ngFor="let post of posts" lines="none">
           <ion-label><p class="post-meta">r/{{ post.community }} · {{ post.authorName }}</p><h3>{{ post.title }}</h3><p>{{ post.body }}</p></ion-label>

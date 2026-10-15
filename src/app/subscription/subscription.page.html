@@ -1,0 +1,76 @@
+<ion-header class="subscription-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Planes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="subscription-content">
+  <main class="subscription-shell ion-padding">
+    <section class="subscription-intro">
+      <p class="eyebrow">HILOHUB · MEMBRESÍAS</p>
+      <h1>Apoya la comunidad<br class="desktop-break"> a tu manera.</h1>
+      <p>Elige un aporte mensual. Los pagos se procesan en PayPal y puedes administrar tu suscripción desde tu cuenta.</p>
+    </section>
+
+    <ion-card *ngIf="currentSubscription" class="current-plan">
+      <ion-card-content>
+        <div class="current-plan-copy">
+          <p class="current-plan-label">TU PLAN ACTUAL</p>
+          <h2>{{ currentPlanName }}</h2>
+        </div>
+        <span class="status-pill" [class.status-inactive]="!isActivelySubscribed">
+          {{ currentSubscriptionStatus }}
+        </span>
+        <p *ngIf="currentSubscription.status === 'ACTIVE'">
+          Para cambiar de plan, cancela tu suscripción en PayPal y selecciona uno nuevo cuando deje de estar activa.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="loading-state" *ngIf="loadingSubscription">
+      <ion-spinner name="crescent" aria-label="Consultando suscripción"></ion-spinner>
+      <span>Consultando tu plan…</span>
+    </div>
+
+    <section *ngIf="!configured && !isActivelySubscribed" class="setup-notice" role="status">
+      <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+      <p>Los pagos estarán disponibles próximamente.</p>
+    </section>
+
+    <ion-text color="danger" *ngIf="errorMessage">
+      <p class="error-message" role="alert">{{ errorMessage }}</p>
+    </ion-text>
+
+    <section class="plans" aria-label="Planes de suscripción" *ngIf="!loadingSubscription && !isActivelySubscribed">
+      <article class="plan-card" *ngFor="let plan of plans">
+        <div class="plan-card-heading">
+          <p class="plan-kicker">MEMBRESÍA MENSUAL</p>
+          <h2>{{ plan.name }}</h2>
+        </div>
+        <div class="plan-price">
+          <span class="price-amount">{{ plan.price | currency:currency:'symbol':'1.2-2' }}</span>
+          <span class="price-period">/ mes</span>
+        </div>
+        <p class="plan-description">Un aporte recurrente para ayudar a mantener HiloHub.</p>
+        <div class="plan-divider"></div>
+        <div class="paypal-button" [id]="'paypal-button-' + plan.id"></div>
+        <p class="payment-caption">
+          <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
+          Pago gestionado por PayPal
+        </p>
+      </article>
+    </section>
+
+    <footer class="billing-note">
+      <p>Suscripción mensual renovable. Puedes cancelarla en cualquier momento desde PayPal.</p>
+      <p>Los precios mostrados son ejemplos; el importe definitivo depende de la configuración del plan en PayPal.</p>
+    </footer>
+    <div class="loading-state confirmation-state" *ngIf="loadingPlan">
+      <ion-spinner name="crescent" aria-label="Confirmando suscripción"></ion-spinner>
+      <span>Confirmando tu suscripción…</span>
+    </div>
+  </main>
+</ion-content>

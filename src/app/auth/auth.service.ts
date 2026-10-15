@@ -17,7 +17,7 @@ import {
 } from 'firebase/auth';
 import { Observable, shareReplay } from 'rxjs';
 import { firebaseApp } from '../firebase';
-import { get, getDatabase, ref, update } from 'firebase/database';
+import { getDatabase, ref, update } from 'firebase/database';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -86,14 +86,10 @@ export class AuthService {
 
   private async syncProfile(user: User): Promise<void> {
     const userRef = ref(getDatabase(firebaseApp), `users/${user.uid}`);
-    const profile = await get(userRef);
-    const profileData: { displayName: string; email: string; role?: 'user' } = {
+    const profileData: { displayName: string; email: string } = {
       displayName: user.displayName || user.email?.split('@')[0] || 'Usuario',
       email: user.email || ''
     };
-    if (!profile.exists()) {
-      profileData.role = 'user';
-    }
     await update(userRef, profileData);
   }
 }

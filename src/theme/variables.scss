@@ -4,25 +4,44 @@
 :root {
 	--app-font-body: 'Outfit', 'Segoe UI', sans-serif;
 	--app-font-heading: 'Sora', 'Segoe UI', sans-serif;
+	--app-ink: #202a28;
+	--app-ink-muted: #68736f;
+	--app-green-950: #203a34;
+	--app-green-800: #35665a;
+	--app-green-700: #4f796c;
+	--app-green-100: #e8efeb;
+	--app-green-50: #f4f7f5;
+	--app-surface: #ffffff;
+	--app-canvas: #f6f7f6;
+	--app-border: #e3e8e5;
+	--app-accent: #8c7654;
+	--app-shadow: 0 12px 32px rgba(31, 44, 39, 0.06);
 
-	--ion-color-primary: #246748;
-	--ion-color-primary-rgb: 36, 103, 72;
-	--ion-color-primary-contrast: #f7fbf8;
-	--ion-color-primary-contrast-rgb: 247, 251, 248;
-	--ion-color-primary-shade: #205b3f;
-	--ion-color-primary-tint: #3a755a;
+	--ion-color-primary: #35665a;
+	--ion-color-primary-rgb: 53, 102, 90;
+	--ion-color-primary-contrast: #ffffff;
+	--ion-color-primary-contrast-rgb: 255, 255, 255;
+	--ion-color-primary-shade: #2f5a4f;
+	--ion-color-primary-tint: #49756a;
 
-	--ion-color-warning: #e0ad3f;
-	--ion-color-warning-rgb: 224, 173, 63;
-	--ion-color-warning-contrast: #1e1a10;
-	--ion-color-warning-contrast-rgb: 30, 26, 16;
-	--ion-color-warning-shade: #c59737;
-	--ion-color-warning-tint: #e3b555;
+	--ion-color-warning: #9a7b4f;
+	--ion-color-warning-rgb: 154, 123, 79;
+	--ion-color-warning-contrast: #ffffff;
+	--ion-color-warning-contrast-rgb: 255, 255, 255;
+	--ion-color-warning-shade: #886c46;
+	--ion-color-warning-tint: #a58861;
 
-	--ion-color-danger: #bb3e35;
-	--ion-color-danger-rgb: 187, 62, 53;
-	--ion-color-danger-contrast: #fff7f7;
-	--ion-color-danger-contrast-rgb: 255, 247, 247;
-	--ion-color-danger-shade: #a5372f;
-	--ion-color-danger-tint: #c25149;
+	--ion-color-danger: #a44843;
+	--ion-color-danger-rgb: 164, 72, 67;
+	--ion-color-danger-contrast: #ffffff;
+	--ion-color-danger-contrast-rgb: 255, 255, 255;
+	--ion-color-danger-shade: #903f3a;
+	--ion-color-danger-tint: #ae5b56;
+
+	--ion-background-color: var(--app-canvas);
+	--ion-text-color: var(--app-ink);
+	--ion-toolbar-background: var(--app-surface);
+	--ion-item-background: var(--app-surface);
+	--ion-card-background: var(--app-surface);
+	--ion-font-family: var(--app-font-body);
 }

@@ -1,0 +1,81 @@
+<ion-header class="communities-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Comunidades</ion-title>
+    <ion-buttons slot="end">
+      <ion-button aria-label="Notificaciones" routerLink="/notifications">
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="communities-content">
+  <main class="communities-shell">
+    <section class="communities-intro">
+      <p class="eyebrow">ENCUENTRA TU GENTE</p>
+      <h1>Explora comunidades</h1>
+      <p>Sigue los temas que te interesan y descubre nuevas conversaciones en tu feed.</p>
+    </section>
+
+    <section class="community-search">
+      <ion-searchbar [(ngModel)]="searchTerm" placeholder="Buscar comunidades o temas" inputmode="search" aria-label="Buscar comunidades"></ion-searchbar>
+      <ion-segment [(ngModel)]="selectedTab" aria-label="Comunidades para explorar">
+        <ion-segment-button value="discover"><ion-label>Explorar</ion-label></ion-segment-button>
+        <ion-segment-button value="following"><ion-label>Siguiendo ({{ subscriptions.length }})</ion-label></ion-segment-button>
+      </ion-segment>
+    </section>
+
+    <nav class="category-list" aria-label="Categorías de comunidades">
+      <button type="button" *ngFor="let category of categories" [class.active]="selectedCategory === category" (click)="selectedCategory = category">
+        {{ category }}
+      </button>
+    </nav>
+
+    <p class="page-error" role="alert" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <div class="loading-state" *ngIf="loading">
+      <ion-spinner name="crescent" aria-label="Cargando comunidades"></ion-spinner>
+      <span>Cargando comunidades…</span>
+    </div>
+
+    <section class="community-grid" *ngIf="!loading && visibleCommunities.length">
+      <article class="community-card" *ngFor="let community of visibleCommunities; trackBy: trackByCommunity">
+        <div class="community-card-heading">
+          <span class="community-icon">{{ initials(community.name) }}</span>
+          <div class="community-heading-copy">
+            <h2>r/{{ community.name }}</h2>
+            <span>{{ community.category }}</span>
+          </div>
+          <span class="member-count">{{ community.memberCount || 0 }} miembros</span>
+        </div>
+        <p class="community-description">{{ community.description }}</p>
+
+        <div class="community-posts" *ngIf="communityPosts(community.id).length">
+          <p class="posts-label">CONVERSACIONES RECIENTES</p>
+          <a class="post-preview" *ngFor="let post of communityPosts(community.id)" [routerLink]="['/detail', post.id]">
+            <span>{{ post.title }}</span><ion-icon name="arrow-forward-outline"></ion-icon>
+          </a>
+        </div>
+        <p class="community-empty" *ngIf="!communityPosts(community.id).length">Aún no hay publicaciones. Sé quien inicie la conversación.</p>
+
+        <div class="community-card-footer">
+          <span>{{ communityPosts(community.id).length ? 'Comunidad activa' : 'Nueva comunidad' }}</span>
+          <ion-button size="small" [fill]="isFollowing(community.id) ? 'outline' : 'solid'" [disabled]="pendingCommunity === community.id" (click)="toggleSubscription(community)">
+            <ion-spinner *ngIf="pendingCommunity === community.id" slot="start" name="crescent"></ion-spinner>
+            <ion-icon *ngIf="pendingCommunity !== community.id" slot="start" [name]="isFollowing(community.id) ? 'checkmark-outline' : 'add-outline'"></ion-icon>
+            {{ isFollowing(community.id) ? 'Siguiendo' : 'Seguir' }}
+          </ion-button>
+        </div>
+      </article>
+    </section>
+
+    <section class="empty-state" *ngIf="!loading && !visibleCommunities.length">
+      <ion-icon name="search-outline"></ion-icon>
+      <h2>{{ selectedTab === 'following' ? 'Aún no sigues comunidades' : 'No encontramos comunidades' }}</h2>
+      <p>{{ selectedTab === 'following' ? 'Explora los temas disponibles y sigue los que te interesan.' : 'Prueba otra búsqueda o categoría.' }}</p>
+      <ion-button *ngIf="selectedTab === 'following'" (click)="selectedTab = 'discover'">Explorar comunidades</ion-button>
+    </section>
+  </main>
+</ion-content>
