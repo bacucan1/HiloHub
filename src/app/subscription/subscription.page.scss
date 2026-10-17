@@ -122,17 +122,27 @@
   background: #f1f5f2;
 }
 
-.current-plan ion-card-content { display: flex; width: 100%; align-items: center; gap: 12px; padding: 0; }
+.current-plan ion-card-content {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+}
+
 .current-plan-copy { flex: 1; }
 .current-plan-label { margin: 0 0 4px; color: var(--sub-muted); font-size: .6rem; }
 .current-plan h2 { margin: 0; color: var(--sub-ink); font-size: .98rem; font-weight: 600; }
 
-.current-plan ion-card-content > p {
+.current-plan ion-card-content > div:last-child { flex-basis: 100%; }
+.subscription-details p {
   margin: 0;
   color: var(--sub-muted);
   font-size: .78rem;
   line-height: 1.5;
 }
+.subscription-details code { overflow-wrap: anywhere; }
 
 .status-pill {
   padding: 5px 10px;
@@ -190,8 +200,6 @@
   .plan-card { padding: 22px 20px 16px; }
   .plan-description { min-height: 0; }
   .plan-description { margin-bottom: 16px; }
-  .current-plan ion-card-content { flex-wrap: wrap; }
-  .current-plan ion-card-content > p { flex-basis: 100%; }
 }
 
 @media (max-width: 420px) {

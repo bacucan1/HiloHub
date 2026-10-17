@@ -12,21 +12,47 @@
     <section class="subscription-intro">
       <p class="eyebrow">HILOHUB · MEMBRESÍAS</p>
       <h1>Apoya la comunidad<br class="desktop-break"> a tu manera.</h1>
-      <p>Elige un aporte mensual. Los pagos se procesan en PayPal y puedes administrar tu suscripción desde tu cuenta.</p>
+      <p>Elige un aporte mensual de prueba. El checkout se realiza en PayPal Sandbox y no genera cobros reales.</p>
     </section>
 
     <ion-card *ngIf="currentSubscription" class="current-plan">
       <ion-card-content>
         <div class="current-plan-copy">
-          <p class="current-plan-label">TU PLAN ACTUAL</p>
+          <p class="current-plan-label">
+            {{ isActivelySubscribed ? 'TU SUSCRIPCIÓN' : 'ESTADO DE TU SUSCRIPCIÓN' }}
+          </p>
           <h2>{{ currentPlanName }}</h2>
         </div>
         <span class="status-pill" [class.status-inactive]="!isActivelySubscribed">
           {{ currentSubscriptionStatus }}
         </span>
-        <p *ngIf="currentSubscription.status === 'ACTIVE'">
-          Para cambiar de plan, cancela tu suscripción en PayPal y selecciona uno nuevo cuando deje de estar activa.
-        </p>
+        <div class="subscription-details">
+          <p *ngIf="currentSubscription.status === 'DEMO_APPROVED'">
+            Demostración local: PayPal Sandbox devolvió la aprobación, pero el estado no fue verificado por un servidor ni sincronizado.
+          </p>
+          <p *ngIf="currentPlanPrice">
+            {{ currentPlanPrice | currency:(currentSubscription.currency || currency):'symbol':'1.2-2' }} / mes
+          </p>
+          <p *ngIf="currentSubscription.createdAt">
+            Registrada el {{ currentSubscription.createdAt | date:'mediumDate' }}
+          </p>
+          <p *ngIf="currentSubscription.nextBillingTime && isActivelySubscribed">
+            Próximo cobro: {{ currentSubscription.nextBillingTime | date:'mediumDate' }}
+          </p>
+          <p>Referencia PayPal: <code>{{ currentSubscription.subscriptionId }}</code></p>
+          <p *ngIf="isActivelySubscribed">
+            Tu suscripción está confirmada. Para cambiar de plan, cancélala desde PayPal y espera a que deje de estar activa.
+          </p>
+          <p *ngIf="isSubscriptionPending">
+            PayPal aún está procesando la activación. Esta pantalla se actualizará cuando recibamos la confirmación.
+          </p>
+          <p *ngIf="currentSubscription.status === 'CANCELLED'">
+            La suscripción fue cancelada. Puedes elegir un plan cuando quieras volver a suscribirte.
+          </p>
+          <p *ngIf="currentSubscription.status === 'SUSPENDED'">
+            PayPal suspendió la suscripción. Revisa tus métodos de pago en PayPal; cuando se reactive, el estado se actualizará aquí.
+          </p>
+        </div>
       </ion-card-content>
     </ion-card>
 
@@ -35,16 +61,26 @@
       <span>Consultando tu plan…</span>
     </div>
 
-    <section *ngIf="!configured && !isActivelySubscribed" class="setup-notice" role="status">
+    <section *ngIf="!configured && canPurchase && !requiresSignIn" class="setup-notice" role="status">
       <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
       <p>Los pagos estarán disponibles próximamente.</p>
+    </section>
+
+    <section *ngIf="requiresSignIn" class="setup-notice" role="status">
+      <ion-icon name="person-circle-outline" aria-hidden="true"></ion-icon>
+      <p>Inicia sesión para consultar tu suscripción o elegir un plan.</p>
     </section>
 
     <ion-text color="danger" *ngIf="errorMessage">
       <p class="error-message" role="alert">{{ errorMessage }}</p>
     </ion-text>
 
-    <section class="plans" aria-label="Planes de suscripción" *ngIf="!loadingSubscription && !isActivelySubscribed">
+    <section class="setup-notice purchase-confirmation" *ngIf="confirmationMessage" role="status">
+      <ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+      <p>{{ confirmationMessage }}</p>
+    </section>
+
+    <section class="plans" aria-label="Planes de suscripción" *ngIf="!loadingSubscription && canPurchase && !requiresSignIn">
       <article class="plan-card" *ngFor="let plan of plans">
         <div class="plan-card-heading">
           <p class="plan-kicker">MEMBRESÍA MENSUAL</p>
@@ -59,14 +95,15 @@
         <div class="paypal-button" [id]="'paypal-button-' + plan.id"></div>
         <p class="payment-caption">
           <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
-          Pago gestionado por PayPal
+          Pago de prueba gestionado por PayPal Sandbox
         </p>
       </article>
     </section>
 
-    <footer class="billing-note">
-      <p>Suscripción mensual renovable. Puedes cancelarla en cualquier momento desde PayPal.</p>
-      <p>Los precios mostrados son ejemplos; el importe definitivo depende de la configuración del plan en PayPal.</p>
+    <footer class="billing-note" *ngIf="!requiresSignIn">
+      <p *ngIf="demoMode">Plan mensual de demostración. El resultado local no concede beneficios ni se sincroniza con otros dispositivos.</p>
+      <p *ngIf="demoMode">Modo demo gratuito: PayPal Sandbox, sin cobros reales. La confirmación queda solo en este navegador.</p>
+      <p *ngIf="!demoMode">Precios de prueba de PayPal Sandbox. Los cobros no son reales.</p>
     </footer>
     <div class="loading-state confirmation-state" *ngIf="loadingPlan">
       <ion-spinner name="crescent" aria-label="Confirmando suscripción"></ion-spinner>

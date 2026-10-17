@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, OnDestroy } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { AfterViewInit, Component } from '@angular/core';
 import { User } from 'firebase/auth';
+import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { environment } from '../../environments/environment';
 import { CurrentSubscription, SubscriptionService } from './subscription.service';
@@ -37,10 +37,12 @@ declare global {
   styleUrls: ['./subscription.page.scss'],
   standalone: false,
 })
-export class SubscriptionPage implements AfterViewInit, OnDestroy {
+export class SubscriptionPage implements AfterViewInit {
   readonly plans = environment.paypal.plans;
   readonly currency = environment.paypal.currency;
+  readonly demoMode = environment.paypal.demoMode;
   readonly configured = Boolean(
+    environment.paypal.demoMode &&
     environment.paypal.clientId &&
     this.plans.length > 0 &&
     this.plans.every((plan) => plan.paypalPlanId)
@@ -48,31 +50,27 @@ export class SubscriptionPage implements AfterViewInit, OnDestroy {
   currentSubscription: CurrentSubscription | null = null;
   loadingPlan = '';
   errorMessage = '';
+  confirmationMessage = '';
   loadingSubscription = true;
-  private stopWatchingSubscription?: () => void;
+  requiresSignIn = false;
+  private paypalButtonsPromise?: Promise<void>;
 
   constructor(
-    public authService: AuthService,
-    private subscriptionService: SubscriptionService,
-    private toastController: ToastController
+    private authService: AuthService,
+    private subscriptionService: SubscriptionService
   ) {}
 
   async ngAfterViewInit(): Promise<void> {
-    const user = this.authService.currentUser;
-    if (!user) {
-      this.loadingSubscription = false;
-      return;
-    }
     try {
-      this.currentSubscription = await this.subscriptionService.getCurrentSubscription(user.uid);
-      this.stopWatchingSubscription = this.subscriptionService.watchCurrentSubscription(
-        user.uid,
-        (subscription) => this.currentSubscription = subscription
-      );
+      const user = await firstValueFrom(this.authService.user$);
+      if (!user) {
+        this.requiresSignIn = true;
+        return;
+      }
+      this.currentSubscription = this.subscriptionService.getDemoSubscription(user.uid);
       this.loadingSubscription = false;
-      if (this.configured && !this.isActivelySubscribed) {
-        await this.loadPaypalSdk();
-        await this.renderSubscriptionButtons(user);
+      if (this.configured && this.canPurchase) {
+        await this.initializePaypalButtons(user);
       }
     } catch (error) {
       console.error('No se pudo consultar la suscripción actual.', error);
@@ -82,23 +80,43 @@ export class SubscriptionPage implements AfterViewInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.stopWatchingSubscription?.();
-  }
-
   get isActivelySubscribed(): boolean {
     return this.currentSubscription?.status === 'ACTIVE';
   }
 
+  get isSubscriptionPending(): boolean {
+    return this.currentSubscription?.status === 'APPROVAL_PENDING';
+  }
+
+  get canPurchase(): boolean {
+    const status = this.currentSubscription?.status;
+    return !status || status === 'CANCELLED' || status === 'EXPIRED';
+  }
+
   get currentPlanName(): string {
-    return this.plans.find((plan) => plan.id === this.currentSubscription?.plan)?.name
+    return this.currentSubscription?.planName
+      ?? this.plans.find((plan) => plan.id === this.currentSubscription?.plan)?.name
       ?? this.currentSubscription?.plan
+      ?? '';
+  }
+
+  get currentPlanPrice(): string {
+    return this.currentSubscription?.price
+      ?? this.plans.find((plan) => plan.id === this.currentSubscription?.plan)?.price
       ?? '';
   }
 
   get currentSubscriptionStatus(): string {
     const status = this.currentSubscription?.status;
-    return status === 'ACTIVE' ? 'Activa' : status === 'CANCELLED' ? 'Cancelada' : status ?? '';
+    const labels: Record<string, string> = {
+      ACTIVE: 'Activa',
+      APPROVAL_PENDING: 'Pendiente de confirmación',
+      DEMO_APPROVED: 'Aprobada en Sandbox (demo)',
+      CANCELLED: 'Cancelada',
+      EXPIRED: 'Vencida',
+      SUSPENDED: 'Suspendida'
+    };
+    return status ? labels[status] ?? 'En revisión' : '';
   }
 
   private async renderSubscriptionButtons(user: User): Promise<void> {
@@ -115,31 +133,55 @@ export class SubscriptionPage implements AfterViewInit, OnDestroy {
         onApprove: async (data) => {
           this.loadingPlan = plan.id;
           this.errorMessage = '';
+          this.confirmationMessage = 'PayPal Sandbox respondió a la solicitud. Guardando el resultado de esta demostración.';
           try {
-            await this.subscriptionService.verifyPaypalSubscription(data.subscriptionID);
-            const toast = await this.toastController.create({
-              message: 'Tu suscripción fue confirmada.',
-              duration: 2500,
-              color: 'success',
-              position: 'top'
-            });
-            await toast.present();
+            const now = Date.now();
+            const demoSubscription: CurrentSubscription = {
+              subscriptionId: data.subscriptionID,
+              plan: plan.id,
+              planName: plan.name,
+              planId: plan.paypalPlanId,
+              price: plan.price,
+              currency: this.currency,
+              status: 'DEMO_APPROVED',
+              createdAt: now,
+              updatedAt: now
+            };
+            this.subscriptionService.saveDemoSubscription(user.uid, demoSubscription);
+            this.currentSubscription = demoSubscription;
+            this.confirmationMessage = 'PayPal Sandbox respondió con una referencia. La suscripción se guardó solo en este navegador y no fue verificada ni sincronizada con HiloHub.';
           } catch (error) {
-            console.error('No se pudo confirmar la suscripción.', error);
-            this.errorMessage = 'PayPal recibió tu suscripción, pero aún no pudimos confirmarla. Si el cobro aparece en tu cuenta, vuelve a intentarlo o contacta al soporte.';
+            console.error('No se pudo guardar el resultado local de PayPal Sandbox.', error);
+            this.errorMessage = 'PayPal Sandbox respondió, pero no se pudo guardar el resultado en este navegador.';
+            this.confirmationMessage = '';
           } finally {
             this.loadingPlan = '';
           }
         },
         onCancel: () => {
+          this.confirmationMessage = '';
           this.errorMessage = 'El proceso de suscripción fue cancelado.';
         },
         onError: (error) => {
           console.error('PayPal reportó un error en la suscripción.', error);
+          this.confirmationMessage = '';
           this.errorMessage = 'PayPal no pudo iniciar la suscripción. Inténtalo de nuevo.';
         }
       }).render(`#paypal-button-${plan.id}`);
     }
+  }
+
+  private initializePaypalButtons(user: User): Promise<void> {
+    if (!this.paypalButtonsPromise) {
+      this.paypalButtonsPromise = (async () => {
+        await this.loadPaypalSdk();
+        await this.renderSubscriptionButtons(user);
+      })().catch((error: unknown) => {
+        this.paypalButtonsPromise = undefined;
+        throw error;
+      });
+    }
+    return this.paypalButtonsPromise;
   }
 
   private loadPaypalSdk(): Promise<void> {

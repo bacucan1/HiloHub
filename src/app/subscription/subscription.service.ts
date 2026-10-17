@@ -1,37 +1,49 @@
 import { Injectable } from '@angular/core';
-import { get, getDatabase, onValue, ref } from 'firebase/database';
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import { firebaseApp } from '../firebase';
 
 export interface CurrentSubscription {
   subscriptionId: string;
   plan: string;
+  planName?: string;
+  planId?: string;
+  price?: string;
+  currency?: string;
   status: string;
+  nextBillingTime?: string | null;
+  createdAt?: number;
   updatedAt: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class SubscriptionService {
-  private readonly database = getDatabase(firebaseApp);
-  private readonly functions = getFunctions(firebaseApp);
+  getDemoSubscription(uid: string): CurrentSubscription | null {
+    const serialized = localStorage.getItem(this.demoStorageKey(uid));
+    if (!serialized) {
+      return null;
+    }
 
-  async getCurrentSubscription(uid: string): Promise<CurrentSubscription | null> {
-    const snapshot = await get(ref(this.database, `subscriptions/${uid}`));
-    return snapshot.exists() ? snapshot.val() as CurrentSubscription : null;
+    const value: unknown = JSON.parse(serialized);
+    if (
+      typeof value !== 'object' ||
+      value === null ||
+      !('subscriptionId' in value) ||
+      typeof value.subscriptionId !== 'string' ||
+      !('plan' in value) ||
+      typeof value.plan !== 'string' ||
+      !('status' in value) ||
+      value.status !== 'DEMO_APPROVED' ||
+      !('updatedAt' in value) ||
+      typeof value.updatedAt !== 'number'
+    ) {
+      throw new Error('El registro local de la demostración de PayPal no tiene un formato válido.');
+    }
+    return value as CurrentSubscription;
   }
 
-  watchCurrentSubscription(uid: string, callback: (subscription: CurrentSubscription | null) => void): () => void {
-    return onValue(
-      ref(this.database, `subscriptions/${uid}`),
-      (snapshot) => callback(snapshot.exists() ? snapshot.val() as CurrentSubscription : null)
-    );
+  saveDemoSubscription(uid: string, subscription: CurrentSubscription): void {
+    localStorage.setItem(this.demoStorageKey(uid), JSON.stringify(subscription));
   }
 
-  async verifyPaypalSubscription(subscriptionId: string): Promise<void> {
-    const verify = httpsCallable<
-      { subscriptionId: string },
-      { plan: string; status: string }
-    >(this.functions, 'verifyPaypalSubscription');
-    await verify({ subscriptionId });
+  private demoStorageKey(uid: string): string {
+    return `hilohub:paypal-demo-subscription:${uid}`;
   }
 }

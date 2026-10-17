@@ -115,29 +115,11 @@ Coloca `service-account.json` en `firebase-admin-tools/` antes de ejecutar el sc
 
 ## Suscripciones con PayPal
 
-La página `/subscription` ofrece tres planes mensuales de ejemplo. Los botones de pago permanecen deshabilitados hasta que se configure PayPal; no se debe usar el precio de ejemplo para cobrar sin crear planes equivalentes en PayPal.
+La aplicación ejecuta el checkout con los planes ya creados en PayPal Sandbox. Para probarlo, ejecuta `npm start`, inicia sesión en HiloHub, abre **Planes** y completa el flujo con una cuenta compradora Sandbox de PayPal. No vuelvas a ejecutar el script de creación de planes, porque generaría planes adicionales.
 
-1. En PayPal Developer, crea una aplicación REST en Sandbox y copia su Client ID.
-2. Crea tres productos/planes de suscripción mensuales en USD. Configura sus importes y copia los Plan ID.
-3. Sustituye `clientId` y los `paypalPlanId` en `src/environments/environment.ts` y `src/environments/environment.prod.ts`. Ajusta también nombres, importes de ejemplo y moneda para que coincidan con los planes.
-4. Configura las credenciales privadas del mismo entorno en Firebase Functions:
+Después de que PayPal Sandbox devuelve una referencia, HiloHub muestra el plan y guarda el resultado como demostración en el `localStorage` de ese navegador. No hay servidor, verificación del pago, sincronización entre dispositivos ni cobros reales; el estado local se puede borrar o modificar y no debe usarse para conceder beneficios reales. El Client ID y los IDs de plan Sandbox están en `src/environments/environment.ts`; producción permanece deshabilitada en `src/environments/environment.prod.ts`.
 
-   ```powershell
-   firebase functions:secrets:set PAYPAL_CLIENT_ID
-   firebase functions:secrets:set PAYPAL_CLIENT_SECRET
-   ```
-
-   `PAYPAL_ENVIRONMENT` usa `sandbox` de forma predeterminada. Al desplegar, Firebase solicitará los tres valores `PAYPAL_PLAN_ESSENTIAL`, `PAYPAL_PLAN_PLUS` y `PAYPAL_PLAN_COMMUNITY`, que deben coincidir con los configurados en la app.
-5. Despliega inicialmente para obtener la URL HTTPS de la función `paypalSubscriptionWebhook`:
-
-   ```powershell
-   firebase deploy --only functions,database
-   ```
-
-6. En PayPal Developer, registra esa URL como webhook y activa `BILLING.SUBSCRIPTION.ACTIVATED`, `BILLING.SUBSCRIPTION.UPDATED`, `BILLING.SUBSCRIPTION.CANCELLED`, `BILLING.SUBSCRIPTION.EXPIRED` y `BILLING.SUBSCRIPTION.SUSPENDED`.
-7. Guarda el Webhook ID generado en `functions/.env.<id-del-proyecto>` como `PAYPAL_WEBHOOK_ID=...` y vuelve a desplegar las funciones. Para producción, añade `PAYPAL_ENVIRONMENT=production` al archivo de entorno correspondiente y configura allí los Plan ID y credenciales de producción correctos.
-
-La app solo presenta al usuario como suscripción activa después de que la función `verifyPaypalSubscription` consulte directamente a PayPal y compruebe estado, plan e identidad. El webhook valida la firma con PayPal y actualiza cancelaciones y cambios de estado. Los registros están en `subscriptions/{uid}` (lectura solo del titular; escritura solo del servidor). Configura por separado los secretos de Sandbox y producción y no publiques nunca el Secret ni el Webhook ID en la app.
+No pongas Client Secrets en Angular, en el repositorio ni en el chat. Para pagos reales o suscripciones verificadas hace falta un backend seguro y credenciales Live, algo que esta modalidad local no implementa.
 
 Las publicaciones nuevas deben usar `posts/`. La ruta antigua `infos/` pertenece al CRUD original y no forma parte del feed social.
 

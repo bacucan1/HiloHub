@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
   paypal: {
+    demoMode: false,
     clientId: '',
     currency: 'USD',
     plans: [
